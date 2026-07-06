@@ -43,7 +43,7 @@
         <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
         <div>
           <h1 class="text-base font-bold text-brandText tracking-tight">DealHub Global</h1>
-          <p class="text-[11px] text-slate-400 font-medium"> Laravel Enterprise Engine v2.6</p>
+          <p class="text-[11px] text-slate-400 font-medium">Laravel Enterprise Engine v2.6</p>
         </div>
       </div>
       <span class="text-[11px] font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md border border-slate-200">
@@ -88,7 +88,6 @@
   </div>
 
   <script>
-    // Telegram Web App Optimization
     if (window.Telegram && window.Telegram.WebApp) {
       window.Telegram.WebApp.ready();
       window.Telegram.WebApp.expand();
@@ -99,7 +98,6 @@
     // ==========================================
     const monetagDirectLink = "YOUR_MONETAG_DIRECT_LINK_HERE";
 
-    // স্যাম্পল ডেটাবেজ (Rating সহ)
     const initialDeals = [
       {
         id: 1,
@@ -129,7 +127,6 @@
       }
     ];
 
-    // অটোমেটিক বাকি অফার জেনারেট লুপ
     for (let i = 3; i <= 10; i++) {
       initialDeals.push({
         id: i,
@@ -146,7 +143,6 @@
       });
     }
 
-    // LocalStorage থেকে রেটিং লোড বা সেট করার লজিক
     let dealsData = JSON.parse(localStorage.getItem('deals_ratings_v1'));
     if (!dealsData) {
       dealsData = initialDeals;
@@ -156,7 +152,6 @@
     const container = document.getElementById('dealsContainer');
     let currentTarget = null;
 
-    // কার্ড রেন্ডার করা
     function renderCards() {
       container.innerHTML = '';
       dealsData.forEach((deal, index) => {
@@ -178,21 +173,17 @@
             <img src="${deal.image}" class="w-16 h-16 object-cover rounded-lg border border-slate-100 shadow-2xs bg-slate-50 flex-shrink-0" alt="Node Image">
           </div>
           
-          <!-- Pros / Cons List -->
           <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-[10px]">
             <div class="text-emerald-600 font-medium flex items-center gap-1">🟢 <span class="text-slate-500 truncate">${deal.pro}</span></div>
             <div class="text-rose-500 font-medium flex items-center gap-1">🔴 <span class="text-slate-500 truncate">${deal.con}</span></div>
           </div>
 
-          <!-- Interactive User Rating System -->
           <div class="flex items-center justify-between pt-2.5 border-t border-slate-100/70">
             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">User Feedback:</span>
             <div class="flex items-center gap-2">
-              <!-- Upvote Button -->
               <button onclick="castVote(${deal.id}, 'up')" ${hasVoted ? 'disabled' : ''} class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${hasVoted === 'up' ? 'bg-emerald-50 border-emerald-300 text-emerald-600' : hasVoted ? 'bg-slate-50 border-slate-100 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 active:scale-95'}">
                 <span>👍</span> <span id="up-count-${deal.id}">${deal.upvotes}</span>
               </button>
-              <!-- Downvote Button -->
               <button onclick="castVote(${deal.id}, 'down')" ${hasVoted ? 'disabled' : ''} class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${hasVoted === 'down' ? 'bg-rose-50 border-rose-300 text-rose-600' : hasVoted ? 'bg-slate-50 border-slate-100 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 active:scale-95'}">
                 <span>👎</span> <span id="down-count-${deal.id}">${deal.downvotes}</span>
               </button>
@@ -204,9 +195,8 @@
       calculateGlobalApproval();
     }
 
-    // রেটিং ভোট দেওয়ার ফাংশন
     function castVote(id, type) {
-      if (localStorage.getItem(`voted_deal_${id}`)) return; // অলরেডি ভোট দিলে রিটার্ন করবে
+      if (localStorage.getItem(`voted_deal_${id}`)) return;
 
       const dealIndex = dealsData.findIndex(d => d.id === id);
       if (dealIndex !== -1) {
@@ -216,14 +206,12 @@
           dealsData[dealIndex].downvotes++;
         }
         
-        // সেভ করা এবং ইউআই আপডেট
         localStorage.setItem('deals_ratings_v1', JSON.stringify(dealsData));
         localStorage.setItem(`voted_deal_${id}`, type);
         renderCards();
       }
     }
 
-    // গ্লোবাল অ্যাপ্রুভাল পার্সেন্টেজ হিসাব করা
     function calculateGlobalApproval() {
       let totalUp = 0;
       let totalDown = 0;
@@ -271,7 +259,6 @@
       content.classList.add('scale-95');
     }
 
-    // ইনিশিয়াল রেন্ডার
     renderCards();
   </script>
 </body>
