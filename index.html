@@ -8,6 +8,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Telegram Web App Script -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- 🎯 MONETAG OFFICIAL SDK INITIALIZATION -->
+  <script src='https://libtl.com/sdk.js' data-zone='11248447' data-sdk='show_11248447'></script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -34,8 +38,16 @@
 </head>
 <body class="bg-slateBg text-slate-800 font-sans antialiased min-h-screen pb-8">
 
+  <!-- 🚫 VPN BLOCKER OVERLAY SYSTEM (ভিপিএন অন থাকলে পুরো অ্যাপ সেভলি লক হয়ে যাবে) -->
+  <div id="vpnModal" class="fixed inset-0 bg-slate-900 z-[100] flex flex-col items-center justify-center p-6 text-center hidden">
+    <div class="w-16 h-16 bg-laravel/10 text-laravel rounded-full flex items-center justify-center text-3xl mb-4 animate-bounce">🛡️</div>
+    <h2 class="text-xl font-bold text-brandText mb-2">VPN Detected!</h2>
+    <p class="text-xs text-slate-500 max-w-xs mb-6">Please turn off your VPN / Proxy and reload the app to continue using DealHub Global.</p>
+    <button onclick="window.location.reload()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-5 py-2.5 rounded-xl text-xs transition active:scale-95 shadow-sm">Reload App</button>
+  </div>
+
   <!-- Main Container -->
-  <div class="max-w-md mx-auto px-4 pt-4">
+  <div id="mainAppContent" class="max-w-md mx-auto px-4 pt-4">
     
     <!-- Enterprise Dashboard Header -->
     <header class="flex items-center justify-between mb-4 bg-panel p-3 rounded-xl border border-slate-200/80 shadow-sm">
@@ -52,7 +64,7 @@
     </header>
 
     <!-- Professional Stats Grid -->
-    <div class="grid grid-cols-3 gap-2.5 mb-5">
+    <div class="grid grid-cols-3 gap-2.5 mb-4">
       <div class="bg-panel p-2.5 rounded-xl border border-slate-200/80 shadow-xs text-center">
         <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Nodes</span>
         <span class="text-sm font-bold text-slate-700">10 Verified</span>
@@ -64,6 +76,21 @@
       <div class="bg-panel p-2.5 rounded-xl border border-slate-200/80 shadow-xs text-center">
         <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Refreshed</span>
         <span class="text-sm font-bold text-blue-600">Just Now</span>
+      </div>
+    </div>
+
+    <!-- 🎁 PREMIUM REFERRAL BANNER SECTION (ইমেজ ও রেফারেল লিংক) -->
+    <div class="bg-panel rounded-xl border border-slate-200/80 p-3 shadow-sm mb-5 overflow-hidden flex flex-col gap-2">
+      <!-- href এর ভেতরে আপনার আসল রেফারেল লিংক বসিয়ে নিতে পারেন -->
+      <a href="https://t.me/Vsurtbot?start=ref" target="_blank" class="block rounded-lg overflow-hidden border border-slate-100">
+        <img src="https://images.unsplash.com/photo-1640340434855-6084b1f4901c?w=600&h=220&fit=crop" class="w-full h-24 object-cover hover:scale-105 transition-transform duration-300" alt="Referral Banner">
+      </a>
+      <div class="flex items-center justify-between text-xs pt-1">
+        <div>
+          <h4 class="font-bold text-brandText">Invite Partners & Earn</h4>
+          <p class="text-[10px] text-slate-400">Claim 10% instant automated credit matching.</p>
+        </div>
+        <a href="https://t.me/Vsurtbot?start=ref" target="_blank" class="bg-laravel hover:bg-rose-600 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition active:scale-95 shadow-sm">Invite</a>
       </div>
     </div>
 
@@ -94,9 +121,9 @@
     }
 
     // ==========================================
-    // 🛑 আপনার MONETAG DIRECT LINK এখানে বসান 🛑
+    // 🛑 আপনার MONETAG DIRECT LINK এখানে বসানো 🛑
     // ==========================================
-    const monetagDirectLink = "YOUR_MONETAG_DIRECT_LINK_HERE";
+    const monetagDirectLink = "https://grootils.com/act/files/micro.tag.min.js?z=11248447";
 
     const initialDeals = [
       {
@@ -223,31 +250,67 @@
       document.getElementById('globalApproval').textContent = `${percent}%`;
     }
 
+    // 🎥 আর্নিং ম্যাক্সিমাইজ করার জন্য ট্রিগার ইন্টারসেপ্টর
     function handleTitleClick(id) {
       currentTarget = dealsData.find(d => d.id === id);
       if (currentTarget) {
-        window.open(monetagDirectLink, '_blank');
-        document.getElementById('modalTitle').textContent = currentTarget.title;
-        document.getElementById('modalDesc').textContent = currentTarget.description;
-        document.getElementById('goButton').onclick = handleGoClick;
-        
-        const overlay = document.getElementById('descModal');
-        const content = document.getElementById('modalContent');
-        overlay.classList.remove('invisible', 'opacity-0');
-        overlay.classList.add('opacity-100');
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
+        // ১. টাস্ক টাইটেলে ক্লিক করলে প্রথমে Rewarded Interstitial ভিডিও অ্যাড লোড হবে
+        if (typeof show_11248447 === 'function') {
+          show_11248447().then(() => {
+            executeOpenModal();
+          }).catch((error) => {
+            // ভিডিও ফেইল হলে ব্যাকআপ হিসেবে Rewarded Popup লোড হবে যাতে ইনকাম মিস না হয়
+            show_11248447('pop').then(() => {
+              executeOpenModal();
+            }).catch(() => {
+              executeOpenModal();
+            });
+          });
+        } else {
+          executeOpenModal();
+        }
       }
     }
 
+    // অরিজিনাল মোডাল ওপেনিং ফাংশন (সংরক্ষিত)
+    function executeOpenModal() {
+      window.open(monetagDirectLink, '_blank');
+      document.getElementById('modalTitle').textContent = currentTarget.title;
+      document.getElementById('modalDesc').textContent = currentTarget.description;
+      document.getElementById('goButton').onclick = handleGoClick;
+      
+      const overlay = document.getElementById('descModal');
+      const content = document.getElementById('modalContent');
+      overlay.classList.remove('invisible', 'opacity-0');
+      overlay.classList.add('opacity-100');
+      content.classList.remove('scale-95');
+      content.classList.add('scale-100');
+    }
+
+    // অ্যাকশন বাটনে ক্লিক হ্যান্ডলার (আর্নিং বৃদ্ধির জন্য পপ-আপসহ ইন্টিগ্রেটেড)
     function handleGoClick() {
       if (currentTarget) {
         window.open(monetagDirectLink, '_blank');
-        setTimeout(() => {
-          window.open(currentTarget.affiliateUrl, '_blank');
-          closeModal();
-        }, 1000);
+        
+        // টাস্ক লিংকে যাওয়ার সময় আরেকটি Rewarded Popup দেখানোর প্রচেষ্টা (হাই রেভিনিউ)
+        if (typeof show_11248447 === 'function') {
+          show_11248447('pop').then(() => {
+            proceedToDestination();
+          }).catch(() => {
+            proceedToDestination();
+          });
+        } else {
+          proceedToDestination();
+        }
       }
+    }
+
+    // ডেস্টিনেশন রিডাইরেকশন (অরিজিনাল ১ সেকেন্ডের টাইমার অক্ষুণ্ণ রাখা হয়েছে)
+    function proceedToDestination() {
+      setTimeout(() => {
+        window.open(currentTarget.affiliateUrl, '_blank');
+        closeModal();
+      }, 1000);
     }
 
     function closeModal() {
@@ -259,7 +322,46 @@
       content.classList.add('scale-95');
     }
 
-    renderCards();
+    // 🛡️ রিয়েল-টাইম অ্যান্টি-ভিপিএন সিকিউরিটি গেটওয়ে
+    async function checkVPNProtection() {
+      try {
+        const response = await fetch('https://freeipapi.com/api/json');
+        if (response.ok) {
+          const data = await response.json();
+          // যদি ব্যবহারকারী প্রক্সি, ভিপিএন বা টর নেটওয়ার্ক ব্যবহার করে
+          if (data.isProxy === true) {
+            document.getElementById('vpnModal').classList.remove('hidden');
+            document.getElementById('mainAppContent').classList.add('hidden');
+            return true;
+          }
+        }
+      } catch (e) {
+        console.log("Security firewall check bypassed safely.");
+      }
+      return false;
+    }
+
+    // গ্লোবাল ইনিশিয়েলাইজার ইভেন্ট (ভিপিএন সেফটি ফার্স্ট)
+    window.addEventListener('DOMContentLoaded', async () => {
+      const isVpnDetected = await checkVPNProtection();
+      
+      // ভিপিএন বন্ধ থাকলেই কেবল ইন-অ্যাপ অটো অ্যাড ও কার্ডগুলো লোড হবে
+      if (!isVpnDetected) {
+        if (typeof show_11248447 === 'function') {
+          show_11248447({
+            type: 'inApp',
+            inAppSettings: {
+              frequency: 2,
+              capping: 0.1, // ৬ মিনিটের সেশন ইন্টারভাল
+              interval: 30, // ৩০ সেকেন্ড পরপর অ্যাড
+              timeout: 5,   // প্রথম অ্যাডের জন্য ৫ সেকেন্ড ডিলে
+              everyPage: false
+            }
+          });
+        }
+        renderCards();
+      }
+    });
   </script>
 </body>
 </html>
