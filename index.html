@@ -13,7 +13,6 @@
       --primary: #45f3ff;
       --text-main: #ffffff;
       --text-muted: #c5a059;
-      --desc-color: #66fcf1;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,79 +20,86 @@
       font-family: 'Inter', sans-serif;
       background-color: var(--bg);
       color: var(--text-main);
-      padding: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     h1 {
-      font-size: 24px;
+      font-size: 18px;
       font-weight: 800;
-      margin: 20px 0;
+      margin: 10px 0 14px 0;
       text-align: center;
-      background: linear-gradient(90deg, #45f3ff, #1f2833);
+      background: linear-gradient(90deg, #45f3ff, #66fcf1);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: 0.5px;
     }
 
-    /* Top 10 Container */
+    /* Compact List Container */
     .list-container {
       width: 100%;
-      max-width: 450px;
+      max-width: 380px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
-    /* Item Card */
+    /* Sleek Mobile Card */
     .deal-card {
       background: var(--surface);
-      border-radius: 16px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.04);
       transition: transform 0.2s;
     }
     .deal-card:active { transform: scale(0.98); }
 
+    /* Reduced Image Height for Mobile */
     .deal-image {
       width: 100%;
-      height: 180px;
+      height: 130px;
       object-fit: cover;
     }
 
-    .deal-details { padding: 16px; }
+    .deal-details { 
+      padding: 10px 12px; 
+    }
     
     .deal-title {
-      font-size: 18px;
+      font-size: 14.5px;
       font-weight: 700;
       color: var(--primary);
       cursor: pointer;
       text-decoration: underline;
       display: inline-block;
-      margin-bottom: 5px;
+      line-height: 1.3;
     }
     .click-hint {
-      font-size: 12px;
-      color: #888;
+      font-size: 11px;
+      color: #8e9bb0;
       display: block;
+      margin-top: 4px;
     }
 
-    /* Popup/Modal for Description */
+    /* Compact Modal */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 1000;
       opacity: 0;
       visibility: hidden;
-      transition: all 0.3s ease;
-      padding: 20px;
+      transition: all 0.25s ease;
+      padding: 16px;
     }
     .modal-overlay.active {
       opacity: 1;
@@ -102,52 +108,56 @@
 
     .modal-content {
       background: #151922;
-      border: 2px solid var(--primary);
+      border: 1.5px solid var(--primary);
       width: 100%;
-      max-width: 400px;
-      border-radius: 20px;
-      padding: 24px;
+      max-width: 340px;
+      border-radius: 16px;
+      padding: 18px;
       text-align: center;
       position: relative;
     }
 
     .modal-title {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       color: var(--primary);
+      padding-right: 15px;
+      line-height: 1.3;
     }
 
     .modal-desc {
-      font-size: 15px;
-      line-height: 1.5;
-      color: #e0e0e0;
-      margin-bottom: 24px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #d1d5db;
+      margin-bottom: 18px;
       text-align: left;
       background: rgba(255,255,255,0.03);
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
+      max-height: 160px;
+      overflow-y: auto;
     }
 
     .btn-go {
       width: 100%;
-      padding: 14px;
+      padding: 11px;
       background: linear-gradient(135deg, #45f3ff, #0080ff);
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       color: #000;
-      font-size: 18px;
+      font-size: 15px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(69, 243, 255, 0.3);
+      box-shadow: 0 3px 10px rgba(69, 243, 255, 0.2);
     }
     .btn-go:active { transform: scale(0.97); }
 
     .close-btn {
       position: absolute;
-      top: 10px; right: 15px;
-      font-size: 24px;
-      color: #aaa;
+      top: 8px; right: 12px;
+      font-size: 20px;
+      color: #888;
       cursor: pointer;
     }
   </style>
@@ -156,15 +166,13 @@
 
   <h1>🔥 TOP 10 EXCLUSIVE DEALS 🔥</h1>
 
-  <!-- Container for Dynamic Items -->
   <div class="list-container" id="dealsContainer"></div>
 
-  <!-- Description & GO Button Modal -->
   <div class="modal-overlay" id="descModal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
       <div class="modal-title" id="modalTitle">Product Title</div>
-      <div class="modal-desc" id="modalDesc">Product Description will appear here...</div>
+      <div class="modal-desc" id="modalDesc">Product Description...</div>
       <button class="btn-go" id="goButton">👉 (GO) 👈</button>
     </div>
   </div>
@@ -175,7 +183,6 @@
   // ==========================================
   const monetagDirectLink = "YOUR_MONETAG_DIRECT_LINK_HERE";
 
-  // টপ ১০ অ্যাফিলিয়েট প্রোডাক্ট ডাটা (এখানে আপনার লিংক ও ছবি দিন)
   const dealsData = [
     {
       id: 1,
@@ -190,11 +197,9 @@
       image: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500",
       description: "Enter the official iPhone raffle draw today. Only 5 lucky winners will be selected this week. Complete the quick survey after clicking GO to lock your entry.",
       affiliateUrl: "https://your-affiliate-link-2.com"
-    },
-    // আপনি চাইলে নিচে এভাবে ৩ থেকে ১০ নম্বর পর্যন্ত একই নিয়মে যোগ করতে পারবেন...
+    }
   ];
 
-  // ১০টি পূর্ণ করার জন্য ডামি ডাটা লুপ করে জেনারেট করছি (টেস্টিং এর সুবিধার্থে)
   for (let i = 3; i <= 10; i++) {
     dealsData.push({
       id: i,
@@ -208,7 +213,6 @@
   const container = document.getElementById('dealsContainer');
   let currentTarget = null;
 
-  // স্ক্রিনে টপ ১০ আইটেম রেন্ডার করার ফাংশন
   dealsData.forEach(deal => {
     const card = document.createElement('div');
     card.className = 'deal-card';
@@ -222,42 +226,28 @@
     container.appendChild(card);
   });
 
-  // ১টি ক্লিক: টাইটেলে ক্লিক করলে যা ঘটবে
   function handleTitleClick(id) {
-    // খুঁজে বের করি কোন আইডি-তে ক্লিক পড়েছে
     currentTarget = dealsData.find(d => d.id === id);
-    
     if (currentTarget) {
-      // 💥 ১ম অ্যাড ওপেন হবে (নতুন ট্যাবে)
       window.open(monetagDirectLink, '_blank');
-
-      // বিবরণী পপআপ/মোডাল আপডেট এবং শো করা
       document.getElementById('modalTitle').textContent = currentTarget.title;
       document.getElementById('modalDesc').textContent = currentTarget.description;
-      
-      // (GO) বাটনের ক্লিক ইভেন্ট সেট করা
       document.getElementById('goButton').onclick = handleGoClick;
-      
-      // মোডাল চালু করা
       document.getElementById('descModal').classList.add('active');
     }
   }
 
-  // ২য় ক্লিক: (GO) বাটনে ক্লিক করলে যা ঘটবে
   function handleGoClick() {
     if (currentTarget) {
-      // 💥 ২য় অ্যাড ওপেন হবে (নতুন ট্যাবে)
       window.open(monetagDirectLink, '_blank');
-
-      // ২য় অ্যাড খোলার পর ইউজারের আসল অ্যাফিলিয়েট লিংকটি ওপেন হবে
       setTimeout(() => {
         window.open(currentTarget.affiliateUrl, '_blank');
         closeModal();
-      }, 1000); // ১ সেকেন্ড পর আসল লিংকটি খুলবে
+      }, 1000);
     }
   }
 
-  // মোডাল বন্ধ করার ফাংশন
+  // ✅ এখানে 'def' এর জায়গায় 'function' ঠিক করে দেওয়া হয়েছে
   function closeModal() {
     document.getElementById('descModal').classList.remove('active');
   }

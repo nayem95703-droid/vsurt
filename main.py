@@ -11,7 +11,7 @@ logging.basicConfig(
 BOT_TOKEN = "8907817915:AAHBJVahlB-SvevOEiNZ9JdKdwZM4Nx-9dI"
 
 # 🛑 এখানে আপনার হোস্টেড index.html এর HTTPS লিংকটি বসান (যেমন: GitHub Pages বা Vercel লিংক)
-WEBAPP_URL = "https://your-username.github.io/your-repo-name/index.html"
+WEBAPP_URL = "https://nayem95703-droid.github.io/vsurt/"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """ইউজার /start দিলে এই মেসেজ এবং বাটনে ক্লিক করে মিনি অ্যাপ খুলবে"""
