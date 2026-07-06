@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Top 10 Best Deals</title>
+  <title>Top 10 Premium Deals</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0b0c10;
-      --surface: #1f2833;
-      --primary: #45f3ff;
-      --text-main: #ffffff;
-      --text-muted: #c5a059;
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --primary: #5cb85c;
+      --primary-dark: #4cae4c;
+      --text-main: #2c3e50;
+      --text-muted: #7f8c8d;
+      --border: #e2e8f0;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: var(--bg);
       color: var(--text-main);
       padding: 12px;
@@ -29,76 +31,111 @@
     }
 
     h1 {
-      font-size: 18px;
-      font-weight: 800;
-      margin: 10px 0 14px 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a252f;
+      margin: 10px 0 16px 0;
       text-align: center;
-      background: linear-gradient(90deg, #45f3ff, #66fcf1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 5px;
     }
 
-    /* Compact List Container */
+    /* List Container */
     .list-container {
       width: 100%;
-      max-width: 380px;
+      max-width: 400px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
-    /* Sleek Mobile Card */
+    /* Premium Review Card Style from image_dd14c7.png */
     .deal-card {
-      background: var(--surface);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.04);
-      transition: transform 0.2s;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      position: relative;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    .deal-card:active { transform: scale(0.98); }
 
-    /* Reduced Image Height for Mobile */
+    /* Ribbon Badge */
+    .badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: var(--primary);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* Card Layout Row */
+    .card-top {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .card-text-side {
+      flex: 1;
+    }
+
+    /* Smaller Right-aligned Square Image */
     .deal-image {
-      width: 100%;
-      height: 130px;
+      width: 75px;
+      height: 75px;
       object-fit: cover;
-    }
-
-    .deal-details { 
-      padding: 10px 12px; 
+      border-radius: 6px;
+      border: 1px solid var(--border);
     }
     
     .deal-title {
-      font-size: 14.5px;
+      font-size: 16px;
       font-weight: 700;
-      color: var(--primary);
+      color: #2c3e50;
       cursor: pointer;
       text-decoration: underline;
-      display: inline-block;
       line-height: 1.3;
-    }
-    .click-hint {
-      font-size: 11px;
-      color: #8e9bb0;
-      display: block;
-      margin-top: 4px;
+      margin-bottom: 4px;
+      padding-right: 80px; /* Space for badge */
     }
 
-    /* Compact Modal */
+    .deal-summary {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Pros & Cons Section mimicking screenshot */
+    .pros-cons {
+      background: #fdfefe;
+      border-top: 1px dashed var(--border);
+      padding-top: 8px;
+      font-size: 12px;
+    }
+    .pro-item { color: #27ae60; margin-bottom: 3px; display: flex; align-items: center; gap: 5px;}
+    .con-item { color: #c0392b; display: flex; align-items: center; gap: 5px; }
+
+    /* Compact Premium Clean Modal */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 1000;
       opacity: 0;
       visibility: hidden;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
       padding: 16px;
     }
     .modal-overlay.active {
@@ -107,73 +144,70 @@
     }
 
     .modal-content {
-      background: #151922;
-      border: 1.5px solid var(--primary);
+      background: white;
+      border-radius: 12px;
       width: 100%;
       max-width: 340px;
-      border-radius: 16px;
-      padding: 18px;
-      text-align: center;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       position: relative;
     }
 
     .modal-title {
       font-size: 16px;
       font-weight: 700;
-      margin-bottom: 10px;
-      color: var(--primary);
-      padding-right: 15px;
+      margin-bottom: 12px;
+      color: #2c3e50;
       line-height: 1.3;
     }
 
     .modal-desc {
       font-size: 13px;
-      line-height: 1.4;
-      color: #d1d5db;
-      margin-bottom: 18px;
-      text-align: left;
-      background: rgba(255,255,255,0.03);
-      padding: 10px;
-      border-radius: 8px;
-      max-height: 160px;
-      overflow-y: auto;
+      line-height: 1.5;
+      color: #555;
+      margin-bottom: 20px;
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
     }
 
     .btn-go {
       width: 100%;
-      padding: 11px;
-      background: linear-gradient(135deg, #45f3ff, #0080ff);
+      padding: 12px;
+      background-color: var(--primary);
       border: none;
-      border-radius: 10px;
-      color: #000;
+      border-radius: 6px;
+      color: white;
       font-size: 15px;
-      font-weight: 800;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 3px 10px rgba(69, 243, 255, 0.2);
+      transition: background 0.2s;
     }
-    .btn-go:active { transform: scale(0.97); }
+    .btn-go:hover { background-color: var(--primary-dark); }
 
     .close-btn {
       position: absolute;
-      top: 8px; right: 12px;
-      font-size: 20px;
-      color: #888;
+      top: 10px; right: 14px;
+      font-size: 22px;
+      color: #aaa;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <h1>🔥 TOP 10 EXCLUSIVE DEALS 🔥</h1>
+  <h1>🏆 Top 10 Best Deals Today 🏆</h1>
 
   <div class="list-container" id="dealsContainer"></div>
 
+  <!-- Description Modal -->
   <div class="modal-overlay" id="descModal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
-      <div class="modal-title" id="modalTitle">Product Title</div>
-      <div class="modal-desc" id="modalDesc">Product Description...</div>
-      <button class="btn-go" id="goButton">👉 (GO) 👈</button>
+      <div class="modal-title" id="modalTitle">Deal Title</div>
+      <div class="modal-desc" id="modalDesc">Loading description...</div>
+      <button class="btn-go" id="goButton">Sign Up Here</button>
     </div>
   </div>
 
@@ -186,26 +220,39 @@
   const dealsData = [
     {
       id: 1,
-      title: "1. 🎁 Get Free $100 Gift Card Now!",
-      image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500", 
-      description: "This is a special limited-time giveaway offer. Anyone from any country can participate. Read instructions carefully on the next page and submit your email to win!",
+      title: "1. Swagbucks",
+      tag: "Best for Quick Surveys",
+      image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=150", 
+      summary: "Swagbucks has paid out over $650 million to users over the last 10+ years.",
+      description: "This is a highly recommended limited-time giveaway and survey program. Create a free account, complete microtasks, and grab your instant sign-up reward today!",
+      pro: "Quick and easy to use",
+      con: "Surveys don't pay much",
       affiliateUrl: "https://your-affiliate-link-1.com"
     },
     {
       id: 2,
-      title: "2. 📱 Win a Brand New iPhone 15 Pro",
-      image: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500",
-      description: "Enter the official iPhone raffle draw today. Only 5 lucky winners will be selected this week. Complete the quick survey after clicking GO to lock your entry.",
+      title: "2. InboxDollars",
+      tag: "Best Sign-up Bonus",
+      image: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=150",
+      summary: "Get a free $5 bonus just for joining and verifying your official email.",
+      description: "Earn real money for watching videos, shopping online, and sharing your opinions. Cashout instantly via PayPal or popular retail gift cards.",
+      pro: "$5 instant sign-up bonus",
+      con: "High minimum cashout limit",
       affiliateUrl: "https://your-affiliate-link-2.com"
     }
   ];
 
+  // অটোমেটিক বাকি ১০টি ডিল জেনারেট করার লুপ
   for (let i = 3; i <= 10; i++) {
     dealsData.push({
       id: i,
-      title: `${i}. 💰 Secret Online Earning Method 2026`,
-      image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=500",
-      description: `This is deal number ${i}. Learn how to make $10-$50 daily using your smartphone. Genuine platform with instant automatic cashout. Click GO to check proof!`,
+      title: `${i}. Secret Earning App`,
+      tag: "Top Rated Method",
+      image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=150",
+      summary: `Learn how to make steady side income daily using your phone setup.`,
+      description: `Step-by-step guidance to unlock premium monetization tasks. Read everything thoroughly on the landing page after clicking the button below.`,
+      pro: "Automatic high payout rate",
+      con: "Requires stable internet connection",
       affiliateUrl: `https://your-affiliate-link-${i}.com`
     });
   }
@@ -217,10 +264,17 @@
     const card = document.createElement('div');
     card.className = 'deal-card';
     card.innerHTML = `
-      <img src="${deal.image}" class="deal-image" alt="Deal Image">
-      <div class="deal-details">
-        <span class="deal-title" onclick="handleTitleClick(${deal.id})">${deal.title}</span>
-        <span class="click-hint">➔ Click title to view details & link</span>
+      <div class="badge">${deal.tag}</div>
+      <div class="card-top">
+        <div class="card-text-side">
+          <div class="deal-title" onclick="handleTitleClick(${deal.id})">${deal.title}</div>
+          <div class="deal-summary">${deal.summary}</div>
+        </div>
+        <img src="${deal.image}" class="deal-image" alt="Image">
+      </div>
+      <div class="pros-cons">
+        <div class="pro-item">✔ ${deal.pro}</div>
+        <div class="con-item">✘ ${deal.con}</div>
       </div>
     `;
     container.appendChild(card);
@@ -247,7 +301,6 @@
     }
   }
 
-  // ✅ এখানে 'def' এর জায়গায় 'function' ঠিক করে দেওয়া হয়েছে
   function closeModal() {
     document.getElementById('descModal').classList.remove('active');
   }
