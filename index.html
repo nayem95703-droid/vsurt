@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Premium Deal Dashboard</title>
-  <!-- Tailwind CSS CDN (Laravel style framework) -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Telegram Web App Script -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -28,7 +28,6 @@
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
-    /* Smooth Scrollbar for Description */
     .custom-scroll::-webkit-scrollbar { width: 4px; }
     .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   </style>
@@ -44,7 +43,7 @@
         <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
         <div>
           <h1 class="text-base font-bold text-brandText tracking-tight">DealHub Global</h1>
-          <p class="text-[11px] text-slate-400 font-medium">Laravel Enterprise Engine v2.4</p>
+          <p class="text-[11px] text-slate-400 font-medium">Laravel Enterprise Engine v2.5</p>
         </div>
       </div>
       <span class="text-[11px] font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md border border-slate-200">
@@ -52,15 +51,15 @@
       </span>
     </header>
 
-    <!-- Professional Stats Grid (SaaS Style) -->
+    <!-- Professional Stats Grid -->
     <div class="grid grid-cols-3 gap-2.5 mb-5">
       <div class="bg-panel p-2.5 rounded-xl border border-slate-200/80 shadow-xs text-center">
-        <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active</span>
+        <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Nodes</span>
         <span class="text-sm font-bold text-slate-700">10 Verified</span>
       </div>
       <div class="bg-panel p-2.5 rounded-xl border border-slate-200/80 shadow-xs text-center">
-        <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Success Rate</span>
-        <span class="text-sm font-bold text-emerald-600">100%</span>
+        <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">User Approval</span>
+        <span class="text-sm font-bold text-emerald-600" id="globalApproval">94.8%</span>
       </div>
       <div class="bg-panel p-2.5 rounded-xl border border-slate-200/80 shadow-xs text-center">
         <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Refreshed</span>
@@ -76,7 +75,7 @@
   <!-- Micro-Interaction Dashboard Modal -->
   <div id="descModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 opacity-0 invisible transition-all duration-200">
     <div class="bg-panel w-full max-w-sm rounded-2xl border border-slate-200 shadow-xl p-5 relative scale-95 transition-all duration-200" id="modalContent">
-      <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1 rounded-lg transition-colors">&times;</button>
+      <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1 rounded-lg transition-colors text-xl">&times;</button>
       <div class="flex items-center gap-2 mb-3">
         <span class="text-[10px] font-bold bg-rose-50 text-rose-600 px-2 py-0.5 rounded border border-rose-100">ACTION REQUIRED</span>
       </div>
@@ -100,7 +99,8 @@
     // ==========================================
     const monetagDirectLink = "YOUR_MONETAG_DIRECT_LINK_HERE";
 
-    const dealsData = [
+    // স্যাম্পল ডেটাবেজ (Rating সহ)
+    const initialDeals = [
       {
         id: 1,
         title: "Swagbucks Premium Global Task",
@@ -110,6 +110,8 @@
         description: "Execute the digital onboarding procedure on the main server. Upon verification of your profile data node, your secure ledger balance will be appended with the promotional funds immediately.",
         pro: "Instant automated confirmation matrix",
         con: "Single deployment constraint per account ID",
+        upvotes: 245,
+        downvotes: 12,
         affiliateUrl: "https://your-affiliate-link-1.com"
       },
       {
@@ -121,13 +123,15 @@
         description: "Initialize target platform verification sequence. Complete micro-surveys via the integrated API router to confirm user identity telemetry and cash out.",
         pro: "Zero overhead computational requirement",
         con: "Slight latency variance based on user region",
+        upvotes: 189,
+        downvotes: 8,
         affiliateUrl: "https://your-affiliate-link-2.com"
       }
     ];
 
-    // Automating remaining 8 enterprise dashboard cards
+    // অটোমেটিক বাকি অফার জেনারেট লুপ
     for (let i = 3; i <= 10; i++) {
-      dealsData.push({
+      initialDeals.push({
         id: i,
         title: `Enterprise Revenue Matrix v0${i}`,
         badge: "SaaS Core",
@@ -136,37 +140,100 @@
         description: `Access the distributed cloud architecture protocol. Follow the standard runtime parameters provided upon dashboard transition to establish your pipeline connectivity framework.`,
         pro: "Scalable throughput with daily automation",
         con: "Requires constant network gateway connection",
+        upvotes: 120 + (i * 7),
+        downvotes: 4 + (i % 3),
         affiliateUrl: `https://your-affiliate-link-${i}.com`
       });
+    }
+
+    // LocalStorage থেকে রেটিং লোড বা সেট করার লজিক
+    let dealsData = JSON.parse(localStorage.getItem('deals_ratings_v1'));
+    if (!dealsData) {
+      dealsData = initialDeals;
+      localStorage.setItem('deals_ratings_v1', JSON.stringify(dealsData));
     }
 
     const container = document.getElementById('dealsContainer');
     let currentTarget = null;
 
-    dealsData.forEach((deal, index) => {
-      const card = document.createElement('div');
-      card.className = "bg-panel rounded-xl border border-slate-200/80 p-4 shadow-xs transition-all active:scale-[0.99] relative flex flex-col gap-3";
-      card.innerHTML = `
-        <div class="flex items-start justify-between gap-3">
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1.5">
-              <span class="text-[9px] font-bold text-slate-400">NODE 0${index + 1}</span>
-              <span class="text-[9px] font-semibold bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded border border-emerald-100">${deal.badge}</span>
+    // কার্ড রেন্ডার করা
+    function renderCards() {
+      container.innerHTML = '';
+      dealsData.forEach((deal, index) => {
+        const hasVoted = localStorage.getItem(`voted_deal_${deal.id}`);
+        const card = document.createElement('div');
+        card.className = "bg-panel rounded-xl border border-slate-200/80 p-4 shadow-xs relative flex flex-col gap-3";
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="text-[9px] font-bold text-slate-400">NODE 0${index + 1}</span>
+                <span class="text-[9px] font-semibold bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded border border-emerald-100">${deal.badge}</span>
+              </div>
+              <h2 class="text-sm font-bold text-brandText hover:text-laravel cursor-pointer transition-colors leading-tight mb-1" onclick="handleTitleClick(${deal.id})">
+                ${deal.title}
+              </h2>
+              <p class="text-[11px] text-slate-400 leading-normal line-clamp-2">${deal.summary}</p>
             </div>
-            <h2 class="text-sm font-bold text-brandText hover:text-laravel cursor-pointer transition-colors leading-tight mb-1" onclick="handleTitleClick(${deal.id})">
-              ${deal.title}
-            </h2>
-            <p class="text-[11px] text-slate-400 leading-normal line-clamp-2">${deal.summary}</p>
+            <img src="${deal.image}" class="w-16 h-16 object-cover rounded-lg border border-slate-100 shadow-2xs bg-slate-50 flex-shrink-0" alt="Node Image">
           </div>
-          <img src="${deal.image}" class="w-16 h-16 object-fit rounded-lg border border-slate-100 shadow-2xs bg-slate-50 flex-shrink-0" alt="Node Image">
-        </div>
-        <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-slate-100 text-[11px]">
-          <div class="text-emerald-600 font-medium flex items-center gap-1">🟢 <span class="text-slate-500">${deal.pro}</span></div>
-          <div class="text-rose-500 font-medium flex items-center gap-1">🔴 <span class="text-slate-500">${deal.con}</span></div>
-        </div>
-      `;
-      container.appendChild(card);
-    });
+          
+          <!-- Pros / Cons List -->
+          <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-[10px]">
+            <div class="text-emerald-600 font-medium flex items-center gap-1">🟢 <span class="text-slate-500 truncate">${deal.pro}</span></div>
+            <div class="text-rose-500 font-medium flex items-center gap-1">🔴 <span class="text-slate-500 truncate">${deal.con}</span></div>
+          </div>
+
+          <!-- Interactive User Rating System -->
+          <div class="flex items-center justify-between pt-2.5 border-t border-slate-100/70">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">User Feedback:</span>
+            <div class="flex items-center gap-2">
+              <!-- Upvote Button -->
+              <button onclick="castVote(${deal.id}, 'up')" ${hasVoted ? 'disabled' : ''} class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${hasVoted === 'up' ? 'bg-emerald-50 border-emerald-300 text-emerald-600' : hasVoted ? 'bg-slate-50 border-slate-100 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 active:scale-95'}">
+                <span>👍</span> <span id="up-count-${deal.id}">${deal.upvotes}</span>
+              </button>
+              <!-- Downvote Button -->
+              <button onclick="castVote(${deal.id}, 'down')" ${hasVoted ? 'disabled' : ''} class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${hasVoted === 'down' ? 'bg-rose-50 border-rose-300 text-rose-600' : hasVoted ? 'bg-slate-50 border-slate-100 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 active:scale-95'}">
+                <span>👎</span> <span id="down-count-${deal.id}">${deal.downvotes}</span>
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      calculateGlobalApproval();
+    }
+
+    // রেটিং ভোট দেওয়ার ফাংশন
+    function castVote(id, type) {
+      if (localStorage.getItem(`voted_deal_${id}`)) return; // অলরেডি ভোট দিলে রিটার্ন করবে
+
+      const dealIndex = dealsData.findIndex(d => d.id === id);
+      if (dealIndex !== -1) {
+        if (type === 'up') {
+          dealsData[dealIndex].upvotes++;
+        } else if (type === 'down') {
+          dealsData[dealIndex].downvotes++;
+        }
+        
+        // সেভ করা এবং ইউআই আপডেট
+        localStorage.setItem('deals_ratings_v1', JSON.stringify(dealsData));
+        localStorage.setItem(`voted_deal_${id}`, type);
+        renderCards();
+      }
+    }
+
+    // গ্লোবাল অ্যাপ্রুভাল পার্সেন্টেজ হিসাব করা
+    function calculateGlobalApproval() {
+      let totalUp = 0;
+      let totalDown = 0;
+      dealsData.forEach(d => {
+        totalUp += d.upvotes;
+        totalDown += d.downvotes;
+      });
+      const percent = ((totalUp / (totalUp + totalDown)) * 100).toFixed(1);
+      document.getElementById('globalApproval').textContent = `${percent}%`;
+    }
 
     function handleTitleClick(id) {
       currentTarget = dealsData.find(d => d.id === id);
@@ -203,6 +270,9 @@
       content.classList.remove('scale-100');
       content.classList.add('scale-95');
     }
+
+    // ইনিশিয়াল রেন্ডার
+    renderCards();
   </script>
 </body>
 </html>
