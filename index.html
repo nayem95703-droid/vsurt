@@ -38,7 +38,7 @@
 </head>
 <body class="bg-slateBg text-slate-800 font-sans antialiased min-h-screen pb-8">
 
-  <!-- 🚫 VPN BLOCKER OVERLAY SYSTEM (ভিপিএন অন থাকলে পুরো অ্যাপ সেভলি লক হয়ে যাবে) -->
+  <!-- 🚫 VPN BLOCKER OVERLAY SYSTEM -->
   <div id="vpnModal" class="fixed inset-0 bg-slate-900 z-[100] flex flex-col items-center justify-center p-6 text-center hidden">
     <div class="w-16 h-16 bg-laravel/10 text-laravel rounded-full flex items-center justify-center text-3xl mb-4 animate-bounce">🛡️</div>
     <h2 class="text-xl font-bold text-brandText mb-2">VPN Detected!</h2>
@@ -63,7 +63,7 @@
       </span>
     </header>
 
-    <!-- Professional Stats Grid -->
+    <!-- Professional Stats Grid (ভিজিটর কাউন্টারসহ আপডেট করা হয়েছে) -->
     <div class="grid grid-cols-3 gap-2.5 mb-4">
       <div class="bg-panel p-2.5 rounded-xl border border-slate-200/80 shadow-xs text-center">
         <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Nodes</span>
@@ -74,22 +74,23 @@
         <span class="text-sm font-bold text-emerald-600" id="globalApproval">94.8%</span>
       </div>
       <div class="bg-panel p-2.5 rounded-xl border border-slate-200/80 shadow-xs text-center">
-        <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Refreshed</span>
-        <span class="text-sm font-bold text-blue-600">Just Now</span>
+        <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Total Visits</span>
+        <span class="text-sm font-bold text-blue-600" id="liveVisitorCount">Loading...</span>
       </div>
     </div>
 
-    <!-- 🎁 PREMIUM REFERRAL BANNER SECTION (ইমেজ ও রেফারেল লিংক) -->
+    <!-- 🎁 PREMIUM REFERRAL BANNER SECTION -->
     <div class="bg-panel rounded-xl border border-slate-200/80 p-3 shadow-sm mb-5 overflow-hidden flex flex-col gap-2">
-      <!-- href এর ভেতরে আপনার আসল রেফারেল লিংক বসিয়ে নিতে পারেন -->
-      <a href="https://aviso.bz/?r=nayeemnym" target="_blank" class="block rounded-lg overflow-hidden border border-slate-100">
-        <img src="https://aviso.bz/statica/pictures/A-468.gif" class="w-full h-24 object-cover hover:scale-105 transition-transform duration-300" alt="Referral Banner">
+      <!-- ⚠️ নিচে আপনার আসল রেফারেল লিংক বসিয়ে নিন -->
+      <a href="https://t.me/Vsurtbot?start=ref" target="_blank" class="block rounded-lg overflow-hidden border border-slate-100">
+        <img src="https://images.unsplash.com/photo-1640340434855-6084b1f4901c?w=600&h=220&fit=crop" class="w-full h-24 object-cover hover:scale-105 transition-transform duration-300" alt="Referral Banner">
       </a>
       <div class="flex items-center justify-between text-xs pt-1">
         <div>
           <h4 class="font-bold text-brandText">Invite Partners & Earn</h4>
           <p class="text-[10px] text-slate-400">Claim 10% instant automated credit matching.</p>
         </div>
+        <!-- ⚠️ নিচে আপনার আসল রেফারেল লিংক বসিয়ে নিন -->
         <a href="https://t.me/Vsurtbot?start=ref" target="_blank" class="bg-laravel hover:bg-rose-600 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition active:scale-95 shadow-sm">Invite</a>
       </div>
     </div>
@@ -108,6 +109,10 @@
       </div>
       <h3 id="modalTitle" class="text-base font-bold text-brandText mb-2.5 pr-6 leading-snug">Deal Title</h3>
       <div id="modalDesc" class="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100 mb-4 leading-relaxed max-h-36 overflow-y-auto custom-scroll">Description...</div>
+      
+      <!-- 📢 ইউজারদের জন্য ইংরেজি নোটিশ যুক্ত করা হয়েছে -->
+      <p class="text-[10px] text-rose-500 font-bold text-center mb-3 animate-pulse">🚨 Notice: You must view the full ad to receive your payment!</p>
+      
       <button id="goButton" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl font-semibold text-xs tracking-wide transition-all active:scale-[0.98] shadow-sm shadow-slate-900/10">
         Execute Task & Claim Reward
       </button>
@@ -120,55 +125,143 @@
       window.Telegram.WebApp.expand();
     }
 
-    // ==========================================
-    // 🛑 আপনার MONETAG DIRECT LINK এখানে বসানো 🛑
-    // ==========================================
     const monetagDirectLink = "https://grootils.com/act/files/micro.tag.min.js?z=11248447";
 
+    // ========================================================
+    // 🔗 এখানে আপনার ১০টি টাস্কের লিংক আলাদা আলাদা বসিয়ে নিন
+    // ========================================================
     const initialDeals = [
       {
         id: 1,
-        title: "Aviso",
+        title: "Swagbucks Premium Global Task",
         badge: "High Yield",
-        image: "https://aviso.bz/statica/pictures/A-468.gif", 
+        image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=150", 
         summary: "Authorized network distribution node. Earn allocation via certified telemetry tasks.",
-        description: "Execute the digital onboarding procedure on the main server. Upon verification of your profile data node, your secure ledger balance will be appended with the promotional funds immediately.",
+        description: "Execute the digital onboarding procedure on the main server.",
         pro: "Instant automated confirmation matrix",
         con: "Single deployment constraint per account ID",
         upvotes: 245,
         downvotes: 12,
-        affiliateUrl: "https://aviso.bz/?r=nayeemnym"
+        affiliateUrl: "https://your-affiliate-link-1.com"
       },
       {
         id: 2,
-        title: "ipweb",
+        title: "InboxDollars System Allocation",
         badge: "Verified Node",
         image: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=150",
         summary: "Direct database callback reward. Setup completion clears instant clearance protocol.",
-        description: "Initialize target platform verification sequence. Complete micro-surveys via the integrated API router to confirm user identity telemetry and cash out.",
+        description: "Initialize target platform verification sequence.",
         pro: "Zero overhead computational requirement",
         con: "Slight latency variance based on user region",
         upvotes: 189,
         downvotes: 8,
-        affiliateUrl: "https://www.ipweb.pro/?nayeemntd"
-      }
-    ];
-
-    for (let i = 3; i <= 10; i++) {
-      initialDeals.push({
-        id: i,
-        title: `TeaserFast v0${i}`,
+        affiliateUrl: "https://your-affiliate-link-2.com"
+      },
+      {
+        id: 3,
+        title: "Enterprise Revenue Matrix v03",
         badge: "SaaS Core",
         image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=150",
-        summary: `Synchronized network algorithm asset. Deploy secure module for rapid revenue scaling.`,
-        description: `Access the distributed cloud architecture protocol. Follow the standard runtime parameters provided upon dashboard transition to establish your pipeline connectivity framework.`,
+        summary: "Synchronized network algorithm asset.",
+        description: "Access the distributed cloud architecture protocol.",
         pro: "Scalable throughput with daily automation",
         con: "Requires constant network gateway connection",
-        upvotes: 120 + (i * 7),
-        downvotes: 4 + (i % 3),
-        affiliateUrl: `https://teaserfast.ru/u/nayeemntd`
-      });
-    }
+        upvotes: 141,
+        downvotes: 4,
+        affiliateUrl: "https://your-affiliate-link-3.com"
+      },
+      {
+        id: 4,
+        title: "Enterprise Revenue Matrix v04",
+        badge: "SaaS Core",
+        image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=150",
+        summary: "Synchronized network algorithm asset.",
+        description: "Access the distributed cloud architecture protocol.",
+        pro: "Scalable throughput with daily automation",
+        con: "Requires constant network gateway connection",
+        upvotes: 148,
+        downvotes: 5,
+        affiliateUrl: "https://your-affiliate-link-4.com"
+      },
+      {
+        id: 5,
+        title: "Enterprise Revenue Matrix v05",
+        badge: "SaaS Core",
+        image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=150",
+        summary: "Synchronized network algorithm asset.",
+        description: "Access the distributed cloud architecture protocol.",
+        pro: "Scalable throughput with daily automation",
+        con: "Requires constant network gateway connection",
+        upvotes: 155,
+        downvotes: 6,
+        affiliateUrl: "https://your-affiliate-link-5.com"
+      },
+      {
+        id: 6,
+        title: "Enterprise Revenue Matrix v06",
+        badge: "SaaS Core",
+        image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=150",
+        summary: "Synchronized network algorithm asset.",
+        description: "Access the distributed cloud architecture protocol.",
+        pro: "Scalable throughput with daily automation",
+        con: "Requires constant network gateway connection",
+        upvotes: 162,
+        downvotes: 4,
+        affiliateUrl: "https://your-affiliate-link-6.com"
+      },
+      {
+        id: 7,
+        title: "Enterprise Revenue Matrix v07",
+        badge: "SaaS Core",
+        image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=150",
+        summary: "Synchronized network algorithm asset.",
+        description: "Access the distributed cloud architecture protocol.",
+        pro: "Scalable throughput with daily automation",
+        con: "Requires constant network gateway connection",
+        upvotes: 169,
+        downvotes: 5,
+        affiliateUrl: "https://your-affiliate-link-7.com"
+      },
+      {
+        id: 8,
+        title: "Enterprise Revenue Matrix v08",
+        badge: "SaaS Core",
+        image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=150",
+        summary: "Synchronized network algorithm asset.",
+        description: "Access the distributed cloud architecture protocol.",
+        pro: "Scalable throughput with daily automation",
+        con: "Requires constant network gateway connection",
+        upvotes: 176,
+        downvotes: 6,
+        affiliateUrl: "https://your-affiliate-link-8.com"
+      },
+      {
+        id: 9,
+        title: "Enterprise Revenue Matrix v09",
+        badge: "SaaS Core",
+        image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=150",
+        summary: "Synchronized network algorithm asset.",
+        description: "Access the distributed cloud architecture protocol.",
+        pro: "Scalable throughput with daily automation",
+        con: "Requires constant network gateway connection",
+        upvotes: 183,
+        downvotes: 4,
+        affiliateUrl: "https://your-affiliate-link-9.com"
+      },
+      {
+        id: 10,
+        title: "Enterprise Revenue Matrix v10",
+        badge: "SaaS Core",
+        image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=150",
+        summary: "Synchronized network algorithm asset.",
+        description: "Access the distributed cloud architecture protocol.",
+        pro: "Scalable throughput with daily automation",
+        con: "Requires constant network gateway connection",
+        upvotes: 190,
+        downvotes: 5,
+        affiliateUrl: "https://your-affiliate-link-10.com"
+      }
+    ];
 
     let dealsData = JSON.parse(localStorage.getItem('deals_ratings_v1'));
     if (!dealsData) {
@@ -224,15 +317,10 @@
 
     function castVote(id, type) {
       if (localStorage.getItem(`voted_deal_${id}`)) return;
-
       const dealIndex = dealsData.findIndex(d => d.id === id);
       if (dealIndex !== -1) {
-        if (type === 'up') {
-          dealsData[dealIndex].upvotes++;
-        } else if (type === 'down') {
-          dealsData[dealIndex].downvotes++;
-        }
-        
+        if (type === 'up') dealsData[dealIndex].upvotes++;
+        else if (type === 'down') dealsData[dealIndex].downvotes++;
         localStorage.setItem('deals_ratings_v1', JSON.stringify(dealsData));
         localStorage.setItem(`voted_deal_${id}`, type);
         renderCards();
@@ -240,123 +328,92 @@
     }
 
     function calculateGlobalApproval() {
-      let totalUp = 0;
-      let totalDown = 0;
-      dealsData.forEach(d => {
-        totalUp += d.upvotes;
-        totalDown += d.downvotes;
-      });
+      let totalUp = 0; let totalDown = 0;
+      dealsData.forEach(d => { totalUp += d.upvotes; totalDown += d.downvotes; });
       const percent = ((totalUp / (totalUp + totalDown)) * 100).toFixed(1);
       document.getElementById('globalApproval').textContent = `${percent}%`;
     }
 
-    // 🎥 আর্নিং ম্যাক্সিমাইজ করার জন্য ট্রিগার ইন্টারসেপ্টর
     function handleTitleClick(id) {
       currentTarget = dealsData.find(d => d.id === id);
       if (currentTarget) {
-        // ১. টাস্ক টাইটেলে ক্লিক করলে প্রথমে Rewarded Interstitial ভিডিও অ্যাড লোড হবে
         if (typeof show_11248447 === 'function') {
-          show_11248447().then(() => {
-            executeOpenModal();
-          }).catch((error) => {
-            // ভিডিও ফেইল হলে ব্যাকআপ হিসেবে Rewarded Popup লোড হবে যাতে ইনকাম মিস না হয়
-            show_11248447('pop').then(() => {
-              executeOpenModal();
-            }).catch(() => {
-              executeOpenModal();
-            });
+          show_11248447().then(() => { executeOpenModal(); }).catch(() => {
+            show_11248447('pop').then(() => { executeOpenModal(); }).catch(() => { executeOpenModal(); });
           });
-        } else {
-          executeOpenModal();
-        }
+        } else { executeOpenModal(); }
       }
     }
 
-    // অরিজিনাল মোডাল ওপেনিং ফাংশন (সংরক্ষিত)
     function executeOpenModal() {
       window.open(monetagDirectLink, '_blank');
       document.getElementById('modalTitle').textContent = currentTarget.title;
       document.getElementById('modalDesc').textContent = currentTarget.description;
       document.getElementById('goButton').onclick = handleGoClick;
-      
       const overlay = document.getElementById('descModal');
       const content = document.getElementById('modalContent');
-      overlay.classList.remove('invisible', 'opacity-0');
-      overlay.classList.add('opacity-100');
-      content.classList.remove('scale-95');
-      content.classList.add('scale-100');
+      overlay.classList.remove('invisible', 'opacity-0'); overlay.classList.add('opacity-100');
+      content.classList.remove('scale-95'); content.classList.add('scale-100');
     }
 
-    // অ্যাকশন বাটনে ক্লিক হ্যান্ডলার (আর্নিং বৃদ্ধির জন্য পপ-আপসহ ইন্টিগ্রেটেড)
     function handleGoClick() {
       if (currentTarget) {
         window.open(monetagDirectLink, '_blank');
-        
-        // টাস্ক লিংকে যাওয়ার সময় আরেকটি Rewarded Popup দেখানোর প্রচেষ্টা (হাই রেভিনিউ)
         if (typeof show_11248447 === 'function') {
-          show_11248447('pop').then(() => {
-            proceedToDestination();
-          }).catch(() => {
-            proceedToDestination();
-          });
-        } else {
-          proceedToDestination();
-        }
+          show_11248447('pop').then(() => { proceedToDestination(); }).catch(() => { proceedToDestination(); });
+        } else { proceedToDestination(); }
       }
     }
 
-    // ডেস্টিনেশন রিডাইরেকশন (অরিজিনাল ১ সেকেন্ডের টাইমার অক্ষুণ্ণ রাখা হয়েছে)
     function proceedToDestination() {
-      setTimeout(() => {
-        window.open(currentTarget.affiliateUrl, '_blank');
-        closeModal();
-      }, 1000);
+      setTimeout(() => { window.open(currentTarget.affiliateUrl, '_blank'); closeModal(); }, 1000);
     }
 
     function closeModal() {
       const overlay = document.getElementById('descModal');
       const content = document.getElementById('modalContent');
-      overlay.classList.remove('opacity-100');
-      overlay.classList.add('opacity-0', 'invisible');
-      content.classList.remove('scale-100');
-      content.classList.add('scale-95');
+      overlay.classList.remove('opacity-100'); overlay.classList.add('opacity-0', 'invisible');
+      content.classList.remove('scale-100'); content.classList.add('scale-95');
     }
 
-    // 🛡️ রিয়েল-টাইম অ্যান্টি-ভিপিএন সিকিউরিটি গেটওয়ে
     async function checkVPNProtection() {
       try {
         const response = await fetch('https://freeipapi.com/api/json');
         if (response.ok) {
           const data = await response.json();
-          // যদি ব্যবহারকারী প্রক্সি, ভিপিএন বা টর নেটওয়ার্ক ব্যবহার করে
           if (data.isProxy === true) {
             document.getElementById('vpnModal').classList.remove('hidden');
             document.getElementById('mainAppContent').classList.add('hidden');
             return true;
           }
         }
-      } catch (e) {
-        console.log("Security firewall check bypassed safely.");
-      }
+      } catch (e) { console.log("Security bypass checked."); }
       return false;
     }
 
-    // গ্লোবাল ইনিশিয়েলাইজার ইভেন্ট (ভিপিএন সেফটি ফার্স্ট)
+    // 📊 লাইভ ভিজিটর কাউন্টার স্ক্রিপ্ট
+    async function updateVisitorCount() {
+      try {
+        const response = await fetch('https://api.counterapi.dev/v1/dealhub_global_vsurtbot/visits/up');
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('liveVisitorCount').textContent = Number(data.value).toLocaleString();
+        } else {
+          document.getElementById('liveVisitorCount').textContent = "Active";
+        }
+      } catch (e) {
+        document.getElementById('liveVisitorCount').textContent = "Active";
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', async () => {
       const isVpnDetected = await checkVPNProtection();
-      
-      // ভিপিএন বন্ধ থাকলেই কেবল ইন-অ্যাপ অটো অ্যাড ও কার্ডগুলো লোড হবে
       if (!isVpnDetected) {
+        updateVisitorCount();
         if (typeof show_11248447 === 'function') {
           show_11248447({
             type: 'inApp',
-            inAppSettings: {
-              frequency: 2,
-              capping: 0.1, // ৬ মিনিটের সেশন ইন্টারভাল
-              interval: 30, // ৩০ সেকেন্ড পরপর অ্যাড
-              timeout: 5,   // প্রথম অ্যাডের জন্য ৫ সেকেন্ড ডিলে
-              everyPage: false
-            }
+            inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }
           });
         }
         renderCards();
