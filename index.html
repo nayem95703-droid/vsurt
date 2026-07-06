@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Top 10 Best Deals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --surface: #1f2833;
+      --primary: #45f3ff;
+      --text-main: #ffffff;
+      --text-muted: #c5a059;
+      --desc-color: #66fcf1;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 20px 0;
+      text-align: center;
+      background: linear-gradient(90deg, #45f3ff, #1f2833);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Top 10 Container */
+    .list-container {
+      width: 100%;
+      max-width: 450px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Item Card */
+    .deal-card {
+      background: var(--surface);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: transform 0.2s;
+    }
+    .deal-card:active { transform: scale(0.98); }
+
+    .deal-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .deal-details { padding: 16px; }
+    
+    .deal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+      display: inline-block;
+      margin-bottom: 5px;
+    }
+    .click-hint {
+      font-size: 12px;
+      color: #888;
+      display: block;
+    }
+
+    /* Popup/Modal for Description */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: #151922;
+      border: 2px solid var(--primary);
+      width: 100%;
+      max-width: 400px;
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      position: relative;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+
+    .modal-desc {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #e0e0e0;
+      margin-bottom: 24px;
+      text-align: left;
+      background: rgba(255,255,255,0.03);
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .btn-go {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #45f3ff, #0080ff);
+      border: none;
+      border-radius: 12px;
+      color: #000;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(69, 243, 255, 0.3);
+    }
+    .btn-go:active { transform: scale(0.97); }
+
+    .close-btn {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 24px;
+      color: #aaa;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔥 TOP 10 EXCLUSIVE DEALS 🔥</h1>
+
+  <!-- Container for Dynamic Items -->
+  <div class="list-container" id="dealsContainer"></div>
+
+  <!-- Description & GO Button Modal -->
+  <div class="modal-overlay" id="descModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <div class="modal-title" id="modalTitle">Product Title</div>
+      <div class="modal-desc" id="modalDesc">Product Description will appear here...</div>
+      <button class="btn-go" id="goButton">👉 (GO) 👈</button>
+    </div>
+  </div>
+
+<script>
+  // ==========================================
+  // 🛑 আপনার MONETAG DIRECT LINK এখানে বসান 🛑
+  // ==========================================
+  const monetagDirectLink = "YOUR_MONETAG_DIRECT_LINK_HERE";
+
+  // টপ ১০ অ্যাফিলিয়েট প্রোডাক্ট ডাটা (এখানে আপনার লিংক ও ছবি দিন)
+  const dealsData = [
+    {
+      id: 1,
+      title: "1. 🎁 Get Free $100 Gift Card Now!",
+      image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500", 
+      description: "This is a special limited-time giveaway offer. Anyone from any country can participate. Read instructions carefully on the next page and submit your email to win!",
+      affiliateUrl: "https://your-affiliate-link-1.com"
+    },
+    {
+      id: 2,
+      title: "2. 📱 Win a Brand New iPhone 15 Pro",
+      image: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500",
+      description: "Enter the official iPhone raffle draw today. Only 5 lucky winners will be selected this week. Complete the quick survey after clicking GO to lock your entry.",
+      affiliateUrl: "https://your-affiliate-link-2.com"
+    },
+    // আপনি চাইলে নিচে এভাবে ৩ থেকে ১০ নম্বর পর্যন্ত একই নিয়মে যোগ করতে পারবেন...
+  ];
+
+  // ১০টি পূর্ণ করার জন্য ডামি ডাটা লুপ করে জেনারেট করছি (টেস্টিং এর সুবিধার্থে)
+  for (let i = 3; i <= 10; i++) {
+    dealsData.push({
+      id: i,
+      title: `${i}. 💰 Secret Online Earning Method 2026`,
+      image: "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=500",
+      description: `This is deal number ${i}. Learn how to make $10-$50 daily using your smartphone. Genuine platform with instant automatic cashout. Click GO to check proof!`,
+      affiliateUrl: `https://your-affiliate-link-${i}.com`
+    });
+  }
+
+  const container = document.getElementById('dealsContainer');
+  let currentTarget = null;
+
+  // স্ক্রিনে টপ ১০ আইটেম রেন্ডার করার ফাংশন
+  dealsData.forEach(deal => {
+    const card = document.createElement('div');
+    card.className = 'deal-card';
+    card.innerHTML = `
+      <img src="${deal.image}" class="deal-image" alt="Deal Image">
+      <div class="deal-details">
+        <span class="deal-title" onclick="handleTitleClick(${deal.id})">${deal.title}</span>
+        <span class="click-hint">➔ Click title to view details & link</span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  // ১টি ক্লিক: টাইটেলে ক্লিক করলে যা ঘটবে
+  function handleTitleClick(id) {
+    // খুঁজে বের করি কোন আইডি-তে ক্লিক পড়েছে
+    currentTarget = dealsData.find(d => d.id === id);
+    
+    if (currentTarget) {
+      // 💥 ১ম অ্যাড ওপেন হবে (নতুন ট্যাবে)
+      window.open(monetagDirectLink, '_blank');
+
+      // বিবরণী পপআপ/মোডাল আপডেট এবং শো করা
+      document.getElementById('modalTitle').textContent = currentTarget.title;
+      document.getElementById('modalDesc').textContent = currentTarget.description;
+      
+      // (GO) বাটনের ক্লিক ইভেন্ট সেট করা
+      document.getElementById('goButton').onclick = handleGoClick;
+      
+      // মোডাল চালু করা
+      document.getElementById('descModal').classList.add('active');
+    }
+  }
+
+  // ২য় ক্লিক: (GO) বাটনে ক্লিক করলে যা ঘটবে
+  function handleGoClick() {
+    if (currentTarget) {
+      // 💥 ২য় অ্যাড ওপেন হবে (নতুন ট্যাবে)
+      window.open(monetagDirectLink, '_blank');
+
+      // ২য় অ্যাড খোলার পর ইউজারের আসল অ্যাফিলিয়েট লিংকটি ওপেন হবে
+      setTimeout(() => {
+        window.open(currentTarget.affiliateUrl, '_blank');
+        closeModal();
+      }, 1000); // ১ সেকেন্ড পর আসল লিংকটি খুলবে
+    }
+  }
+
+  // মোডাল বন্ধ করার ফাংশন
+  function closeModal() {
+    document.getElementById('descModal').classList.remove('active');
+  }
+</script>
+</body>
+</html>
