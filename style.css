@@ -82,6 +82,27 @@ body {
     font-size: 12px;
 }
 
+.ref-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.ref-stats span {
+    font-size: 13px;
+    color: #aaa;
+}
+
+.ad-item.locked {
+    opacity: 0.4;
+}
+
+.ad-item.locked .btn-sm {
+    background: #222;
+    color: #555;
+}
+
 .ad-item {
     background: #222244;
     border-radius: 10px;

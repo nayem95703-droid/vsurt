@@ -1,24 +1,23 @@
 const AD_LINKS = [
-    { id: 1, name: 'Ad Network A', reward: 0.05, url: 'https://example.com/offer1' },
-    { id: 2, name: 'Ad Network B', reward: 0.05, url: 'https://example.com/offer2' },
-    { id: 3, name: 'Ad Network C', reward: 0.05, url: 'https://example.com/offer3' },
-    { id: 4, name: 'Ad Network D', reward: 0.05, url: 'https://example.com/offer4' },
-    { id: 5, name: 'Ad Network E', reward: 0.05, url: 'https://example.com/offer5' },
-    { id: 6, name: 'Ad Network F', reward: 0.05, url: 'https://example.com/offer6' },
-    { id: 7, name: 'Ad Network G', reward: 0.05, url: 'https://example.com/offer7' },
-    { id: 8, name: 'Ad Network H', reward: 0.05, url: 'https://example.com/offer8' },
-    { id: 9, name: 'Ad Network I', reward: 0.05, url: 'https://example.com/offer9' },
-    { id: 10, name: 'Ad Network J', reward: 0.05, url: 'https://example.com/offer10' }
+    { id: 1, name: 'Ad Network A', reward: 0.06, url: 'https://example.com/offer1' },
+    { id: 2, name: 'Ad Network B', reward: 0.06, url: 'https://example.com/offer2' },
+    { id: 3, name: 'Ad Network C', reward: 0.06, url: 'https://example.com/offer3' },
+    { id: 4, name: 'Ad Network D', reward: 0.06, url: 'https://example.com/offer4' },
+    { id: 5, name: 'Ad Network E', reward: 0.06, url: 'https://example.com/offer5' }
 ];
 
-const PER_AD_REWARD = 0.05;
-const MIN_WITHDRAWAL = 1.0;
+const PER_AD_REWARD = 0.06;
+const MIN_WITHDRAWAL = 5.0;
+const REF_REWARD = 0.25;
+const REF_ACTIVATE_HOURS = 48;
 
 let state = {
     balance: 0,
     completedAds: [],
     currentAdIndex: -1,
-    isVpnBlocked: false
+    isVpnBlocked: false,
+    referrals: [],
+    refEarnings: 0
 };
 
 function detectVPN() {
@@ -75,6 +74,8 @@ function loadState() {
             const parsed = JSON.parse(saved);
             state.balance = parsed.balance || 0;
             state.completedAds = parsed.completedAds || [];
+            state.referrals = parsed.referrals || [];
+            state.refEarnings = parsed.refEarnings || 0;
         } catch {}
     }
 }
@@ -82,7 +83,9 @@ function loadState() {
 function saveState() {
     localStorage.setItem('earnProState', JSON.stringify({
         balance: state.balance,
-        completedAds: state.completedAds
+        completedAds: state.completedAds,
+        referrals: state.referrals,
+        refEarnings: state.refEarnings
     }));
 }
 
@@ -106,22 +109,24 @@ function renderAds() {
     container.innerHTML = '';
     AD_LINKS.forEach((ad, index) => {
         const completed = state.completedAds.includes(ad.id);
+        const prevCompleted = index === 0 || state.completedAds.includes(AD_LINKS[index - 1].id);
+        const locked = !completed && !prevCompleted;
         const div = document.createElement('div');
-        div.className = `ad-item ${completed ? 'completed' : ''}`;
+        div.className = `ad-item ${completed ? 'completed' : ''} ${locked ? 'locked' : ''}`;
         div.innerHTML = `
             <div class="ad-info">
-                <h4>${ad.name}</h4>
-                <p>${completed ? 'Completed ✓' : 'Click to watch & earn'}</p>
+                <h4>${ad.name} ${locked ? '🔒' : ''}</h4>
+                <p>${completed ? 'Completed ✓' : locked ? 'Complete previous ad first' : 'Click to watch & earn'}</p>
             </div>
             <span class="ad-reward">+$${ad.reward.toFixed(2)}</span>
-            <button class="btn btn-sm" data-index="${index}" ${completed ? 'disabled' : ''}>
-                ${completed ? 'Done' : 'Start'}
+            <button class="btn btn-sm" data-index="${index}" ${completed || locked ? 'disabled' : ''}>
+                ${completed ? 'Done' : locked ? 'Locked' : 'Start'}
             </button>
         `;
         container.appendChild(div);
     });
 
-    container.querySelectorAll('.btn-sm').forEach(btn => {
+    container.querySelectorAll('.btn-sm:not([disabled])').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const index = parseInt(e.target.dataset.index);
             startAd(index);
@@ -201,6 +206,36 @@ function showCongrats() {
     };
 }
 
+function checkReferral() {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref && ref !== getRefCode()) {
+        const existing = state.referrals.find(r => r.code === ref);
+        if (!existing) {
+            state.referrals.push({
+                code: ref,
+                time: Date.now(),
+                activated: false
+            });
+            saveState();
+        }
+    }
+}
+
+function processReferrals() {
+    const now = Date.now();
+    const ms48h = REF_ACTIVATE_HOURS * 60 * 60 * 1000;
+    state.referrals.forEach(r => {
+        if (!r.activated && (now - r.time >= ms48h)) {
+            r.activated = true;
+            state.refEarnings += REF_REWARD;
+            state.balance += REF_REWARD;
+        }
+    });
+    saveState();
+    updateUI();
+}
+
 function updateUI() {
     const bal = document.getElementById('balanceDisplay');
     if (bal) bal.textContent = `$${state.balance.toFixed(2)}`;
@@ -209,6 +244,18 @@ function updateUI() {
     if (withdrawBtn) {
         withdrawBtn.disabled = state.balance < MIN_WITHDRAWAL;
     }
+
+    const refCount = document.getElementById('refCount');
+    if (refCount) refCount.textContent = state.referrals.length;
+
+    const refActive = document.getElementById('refActive');
+    if (refActive) {
+        const active = state.referrals.filter(r => r.activated).length;
+        refActive.textContent = active;
+    }
+
+    const refEarn = document.getElementById('refEarnings');
+    if (refEarn) refEarn.textContent = state.refEarnings.toFixed(2);
 }
 
 async function initVPNCheck() {
@@ -310,9 +357,12 @@ function handleWithdraw() {
     const vpnBlocked = await initVPNCheck();
     if (!vpnBlocked) {
         loadState();
+        checkReferral();
+        processReferrals();
         resetDailyAds();
         renderAds();
         setupRefLink();
         setupModals();
+        setInterval(processReferrals, 60000);
     }
 })();
