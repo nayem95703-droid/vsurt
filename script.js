@@ -18,23 +18,12 @@ let state = {
     balance: 0,
     completedAds: [],
     currentAdIndex: -1,
-    isVpnBlocked: checkVPN()
+    isVpnBlocked: false
 };
-
-function checkVPN() {
-    try {
-        const conn = navigator.connection;
-        if (conn && conn.type === 'vpn') return true;
-        const rtc = new RTCPeerConnection();
-        return false;
-    } catch {
-        return false;
-    }
-}
 
 function detectVPN() {
     return new Promise((resolve) => {
-        const ips = [];
+        const ips = new Set();
         const pc = new RTCPeerConnection({
             iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
         });
@@ -42,25 +31,32 @@ function detectVPN() {
         pc.createOffer().then(offer => pc.setLocalDescription(offer));
         pc.onicecandidate = (ice) => {
             if (!ice || !ice.candidate || !ice.candidate.candidate) {
-                resolve(false);
+                resolve(ips.size > 1);
                 return;
             }
-            const ip = ice.candidate.candidate.match(/([0-9]{1,3}\.){3}[0-9]{1,3}/);
-            if (ip) ips.push(ip[0]);
-            if (ips.length > 1) {
+            const match = ice.candidate.candidate.match(/([0-9]{1,3}\.){3}[0-9]{1,3}/);
+            if (match) ips.add(match[0]);
+            if (ips.size > 1) {
                 pc.close();
                 resolve(true);
             }
         };
         setTimeout(() => {
             pc.close();
-            resolve(false);
-        }, 3000);
+            resolve(ips.size > 1);
+        }, 4000);
     });
 }
 
-function isVPN() {
-    return state.isVpnBlocked;
+function blockVPN() {
+    document.body.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#0f0f1a;color:#fff;text-align:center;padding:20px">
+            <div style="font-size:64px;margin-bottom:20px">🚫</div>
+            <h1 style="font-size:24px;margin-bottom:12px">VPN Detected!</h1>
+            <p style="color:#ff4444;font-size:16px">Please turn off your VPN to access this site.</p>
+            <p style="color:#666;font-size:13px;margin-top:8px">VPN ব্যবহার করা যাবে না। অনুগ্রহ করে VPN বন্ধ করুন।</p>
+        </div>
+    `;
 }
 
 function getRefCode() {
@@ -136,12 +132,6 @@ function renderAds() {
 }
 
 function startAd(index) {
-    if (isVPN()) {
-        document.getElementById('vpnWarning').style.display = 'block';
-        return;
-    }
-    document.getElementById('vpnWarning').style.display = 'none';
-
     state.currentAdIndex = index;
     const ad = AD_LINKS[index];
     const modal = document.getElementById('adModal');
@@ -225,8 +215,10 @@ async function initVPNCheck() {
     const vpn = await detectVPN();
     state.isVpnBlocked = vpn;
     if (vpn) {
-        document.getElementById('vpnWarning').style.display = 'block';
+        blockVPN();
+        return true;
     }
+    return false;
 }
 
 function setupRefLink() {
@@ -314,9 +306,13 @@ function handleWithdraw() {
     }, 3000);
 }
 
-initVPNCheck();
-loadState();
-resetDailyAds();
-renderAds();
-setupRefLink();
-setupModals();
+(async () => {
+    const vpnBlocked = await initVPNCheck();
+    if (!vpnBlocked) {
+        loadState();
+        resetDailyAds();
+        renderAds();
+        setupRefLink();
+        setupModals();
+    }
+})();

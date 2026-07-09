@@ -58,24 +58,6 @@ body {
     color: #fff;
 }
 
-.vpn-warning {
-    background: #ff4444;
-    color: #fff;
-    padding: 12px 16px;
-    border-radius: 10px;
-    text-align: center;
-    font-weight: 600;
-    display: none;
-    margin-bottom: 16px;
-    animation: shake 0.5s ease-in-out;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
 .section {
     background: #1a1a2e;
     border-radius: 12px;
