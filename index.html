@@ -2,126 +2,219 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EarnPro - Watch Ads & Earn</title>
+    <meta name="viewport" content="width=1124">
+    <title>EarnPro - Watch ads and earn money</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>EarnPro</h1>
-            <p>Watch Ads. Earn Money. Withdraw Anytime.</p>
-            <div class="balance-card">
-                <span>Balance</span>
-                <h2 id="balanceDisplay">$0.00</h2>
-            </div>
-        </div>
+<div id="load"></div>
 
-        <div class="section">
-            <h3>
-                <span>Today's Ads</span>
-                <span id="adCounter" class="badge">0/0</span>
-            </h3>
-            <div id="filterTabs" class="filter-tabs"></div>
-            <div id="adsContainer">
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>Withdraw</h3>
-            <div class="withdraw-info">
-                <p>Minimum withdrawal: <strong>$5.00</strong></p>
-                <p>Payment: USDT (Binance) / Litecoin</p>
-            </div>
-            <button class="btn btn-primary" id="withdrawBtn" disabled>Withdraw</button>
-        </div>
-
-        <div class="section">
-            <h3>Referral</h3>
-            <p>Invite friends and earn <strong>$0.25</strong> per referral! (activates after 48h)</p>
-            <div class="ref-stats">
-                <span>Total: <strong id="refCount">0</strong></span>
-                <span>Active: <strong id="refActive">0</strong></span>
-                <span>Earned: $<strong id="refEarnings">0.00</strong></span>
-            </div>
-            <div class="ref-link">
-                <input type="text" id="refLink" readonly>
-                <button class="btn btn-sm" id="copyRefBtn">Copy</button>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>&copy; 2026 EarnPro. All rights reserved.</p>
-        </div>
-    </div>
-
-    <div class="modal" id="adModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Watch Ad</h3>
-                <span class="close" id="closeAdModal">&times;</span>
-            </div>
-            <div class="modal-body" id="adModalBody">
-                <div class="ad-timer" id="adTimer">5</div>
-                <p id="adStatus">Loading ad...</p>
-                <div class="ad-placeholder" id="adPlaceholder">
-                    <div class="ad-box">
-                        <p>Sponsored Content</p>
-                        <div class="ad-content" id="adContent">
-                        </div>
+<table class="main">
+    <tr>
+        <td colspan="3" id="header">
+            <div class="header">
+                <div class="header__logo">
+                    <a href="/" class="header-logo__img">EARNPRO</a>
+                </div>
+                <div class="header__user-block">
+                    <div class="balance-top">
+                        Balance: <strong id="balanceDisplay">$0.00</strong>
                     </div>
                 </div>
-                <button class="btn btn-success" id="adVisitBtn" style="display:none">Visit Link</button>
             </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" id="main-menu">
+            <nav class="main-navigation">
+                <ul class="main-navigation__list">
+                    <li class="main-navigation__item"><a class="main-navigation__link active" href="/">Home</a></li>
+                    <li class="main-navigation__item"><a class="main-navigation__link" href="#">News</a></li>
+                    <li class="main-navigation__item"><a class="main-navigation__link" href="#">Payments</a></li>
+                    <li class="main-navigation__item"><a class="main-navigation__link" href="#">Top</a></li>
+                    <li class="main-navigation__item"><a class="main-navigation__link" href="#">Referrals</a></li>
+                    <li class="main-navigation__item"><a class="main-navigation__link" href="#">View Ads</a></li>
+                    <li class="main-navigation__item"><a class="main-navigation__link" href="#">FAQ</a></li>
+                    <li class="main-navigation__item"><a class="main-navigation__link" href="#">Competition</a></li>
+                </ul>
+            </nav>
+        </td>
+    </tr>
+    <tr>
+        <td class="left-sidebar">
+            <div class="short-stats">
+                <ul class="short-stats__list">
+                    <li class="short-stats__item">
+                        <div class="short-stats__top">Total Users</div>
+                        <div class="short-stats__bottom"><span class="text-bold" id="totalUsers">12,458</span></div>
+                    </li>
+                    <li class="short-stats__item">
+                        <div class="short-stats__top">Total Paid</div>
+                        <div class="short-stats__bottom"><span class="text-bold" id="totalPaid">$45,892</span></div>
+                    </li>
+                    <li class="short-stats__item">
+                        <div class="short-stats__top">Online Now</div>
+                        <div class="short-stats__bottom"><span class="text-bold" id="onlineNow">1,892</span></div>
+                    </li>
+                    <li class="short-stats__item">
+                        <div class="short-stats__top">New Today</div>
+                        <div class="short-stats__bottom"><span class="text-bold" id="newToday">847</span></div>
+                    </li>
+                    <li class="short-stats__item">
+                        <div class="short-stats__top">Paid 24h</div>
+                        <div class="short-stats__bottom"><span class="text-bold" id="paid24h">$3,247</span></div>
+                    </li>
+                    <li class="short-stats__item">
+                        <div class="short-stats__top">Your Referrals</div>
+                        <div class="short-stats__bottom"><span class="text-bold" id="refCount">0</span></div>
+                    </li>
+                    <li class="short-stats__item">
+                        <div class="short-stats__top">Ref. Earnings</div>
+                        <div class="short-stats__bottom">$<span class="text-bold" id="refEarnings">0.00</span></div>
+                    </li>
+                </ul>
+            </div>
+        </td>
+        <td style="vertical-align:top;" id="contentwrapper">
+            <div class="page-content">
+                <h1 class="page-title">View Ads & Earn Money</h1>
+                <div class="ads-controls">
+                    <div id="filterTabs" class="filter-tabs"></div>
+                    <div class="ads-info">
+                        Completed: <strong id="adCounter" class="completed-count">0/15</strong>
+                        &nbsp;|&nbsp; Total earned: <strong>$<span id="totalEarned">0.00</span></strong>
+                    </div>
+                </div>
+
+                <div id="adsContainer" class="tasks-list"></div>
+
+                <div class="surf-info">
+                    <p>Watch 5 Bonus Ads ($0.06 each) + 10 Video Ads ($0.03 each)</p>
+                    <p>Complete previous ad to unlock the next one</p>
+                </div>
+            </div>
+
+            <div class="page-content" style="margin-top:16px">
+                <h2 class="page-title" style="font-size:18px">Withdraw Funds</h2>
+                <div class="withdraw-box">
+                    <div class="withdraw-info">
+                        Min withdrawal: <strong>$5.00</strong> &nbsp;|&nbsp; 
+                        Payment: <strong>USDT (BEP20)</strong> / <strong>Litecoin</strong>
+                    </div>
+                    <button class="btn btn-primary" id="withdrawBtn" disabled>Request Withdrawal</button>
+                </div>
+            </div>
+
+            <div class="page-content" style="margin-top:16px">
+                <h2 class="page-title" style="font-size:18px">Referral Program</h2>
+                <p>Invite friends and earn <strong>$0.25</strong> per referral! (activates after 48h)</p>
+                <div class="ref-link">
+                    <input type="text" id="refLink" readonly>
+                    <button class="btn btn-sm" id="copyRefBtn">Copy</button>
+                </div>
+            </div>
+        </td>
+        <td class="right-sidebar">
+            <div class="context-ad">
+                <div class="context-ad__inner">
+                    <section class="context-ad__row">
+                        <a class="context-ad__link" href="#" target="_blank">
+                            <h2 class="context-ad__header">Earn More Today</h2>
+                            <p class="context-ad__text">Complete all ads and earn up to $0.60 daily</p>
+                            <p class="context-ad__url">earnpro.bz</p>
+                        </a>
+                    </section>
+                    <section class="context-ad__row">
+                        <a class="context-ad__link" href="#" target="_blank">
+                            <h2 class="context-ad__header">Referral Bonus</h2>
+                            <p class="context-ad__text">Invite friends and earn $0.25 each</p>
+                            <p class="context-ad__url">earnpro.bz/ref</p>
+                        </a>
+                    </section>
+                    <section class="context-ad__row">
+                        <a class="context-ad__link" href="#" target="_blank">
+                            <h2 class="context-ad__header">USDT Withdrawal</h2>
+                            <p class="context-ad__text">Withdraw via Binance USDT BEP20</p>
+                            <p class="context-ad__url">earnpro.bz</p>
+                        </a>
+                    </section>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div class="footer">
+    <div class="footer__container">
+        <div class="footer-top">
+            <div class="footer-copyright">EARNPRO &copy; 2026</div>
+            <ul class="footer-menu">
+                <li class="footer-menu__item"><a href="#" class="footer-menu__link">Terms</a></li>
+                <li class="footer-menu__item"><a href="#" class="footer-menu__link">Privacy</a></li>
+                <li class="footer-menu__item"><a href="#" class="footer-menu__link">Support</a></li>
+                <li class="footer-menu__item"><a href="#" class="footer-menu__link">FAQ</a></li>
+                <li class="footer-menu__item"><a href="#" class="footer-menu__link">Contact</a></li>
+            </ul>
         </div>
     </div>
+</div>
 
-    <div class="modal" id="withdrawModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Withdraw Funds</h3>
-                <span class="close" id="closeWithdrawModal">&times;</span>
+<div class="modal" id="adModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Watch Advertisement</h3>
+            <span class="close" id="closeAdModal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="ad-timer" id="adTimer">5</div>
+            <p id="adStatus">Loading ad...</p>
+            <div class="ad-placeholder">
+                <div class="ad-content" id="adContent"></div>
             </div>
-            <div class="modal-body">
-                <div class="payment-option">
-                    <label class="radio-label">
-                        <input type="radio" name="payment" value="usdt" checked>
-                        USDT (Binance)
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="payment" value="litecoin">
-                        Litecoin
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>Amount ($)</label>
-                    <input type="number" id="withdrawAmount" min="5" step="0.01" value="5">
-                </div>
-                <div class="form-group">
-                    <label id="addressLabel">USDT Address (BEP20)</label>
-                    <input type="text" id="walletAddress" placeholder="Enter your wallet address">
-                </div>
-                <button class="btn btn-primary" id="submitWithdraw">Submit Withdrawal</button>
-                <p id="withdrawMsg" class="msg"></p>
-            </div>
+            <button class="btn btn-success" id="adVisitBtn" style="display:none">Visit Link & Earn</button>
         </div>
     </div>
+</div>
 
-    <div class="modal" id="congratsModal">
-        <div class="modal-content congrats-content">
-            <div class="modal-header">
-                <h3>Congratulations! 🎉</h3>
+<div class="modal" id="withdrawModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Withdraw Funds</h3>
+            <span class="close" id="closeWithdrawModal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="payment-option">
+                <label class="radio-label"><input type="radio" name="payment" value="usdt" checked> USDT (BEP20)</label>
+                <label class="radio-label"><input type="radio" name="payment" value="litecoin"> Litecoin</label>
             </div>
-            <div class="modal-body">
-                <div class="congrats-icon">🏆</div>
-                <h2>Congratulations! 🎉</h2>
-                <p>You completed all ads in this category!</p>
-                <p>Keep going to earn more!</p>
-                <button class="btn btn-primary" id="closeCongrats">Awesome!</button>
+            <div class="form-group">
+                <label>Amount ($)</label>
+                <input type="number" id="withdrawAmount" min="5" step="0.01" value="5">
             </div>
+            <div class="form-group">
+                <label id="addressLabel">USDT Address (BEP20)</label>
+                <input type="text" id="walletAddress" placeholder="Enter your wallet address">
+            </div>
+            <button class="btn btn-primary" id="submitWithdraw">Submit Withdrawal</button>
+            <p id="withdrawMsg" class="msg"></p>
         </div>
     </div>
+</div>
 
-    <script src="script.js"></script>
+<div class="modal" id="congratsModal">
+    <div class="modal-content congrats-content">
+        <div class="modal-header">
+            <h3>Congratulations!</h3>
+        </div>
+        <div class="modal-body" style="text-align:center">
+            <div style="font-size:64px;margin:16px 0">🏆</div>
+            <h2>You completed all ads!</h2>
+            <p style="color:#aaa">Keep watching daily to earn more!</p>
+            <button class="btn btn-primary" id="closeCongrats" style="margin-top:16px">Awesome!</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

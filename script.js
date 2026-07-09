@@ -16,7 +16,6 @@ const AD_LINKS = [
     { id: 15, name: 'Video Ad 10', reward: 0.03, url: 'https://example.com/video10', type: 'video' }
 ];
 
-const PER_AD_REWARD = 0.06;
 const MIN_WITHDRAWAL = 5.0;
 const REF_REWARD = 0.25;
 const REF_ACTIVATE_HOURS = 48;
@@ -34,37 +33,41 @@ let state = {
 function detectVPN() {
     return new Promise((resolve) => {
         const ips = new Set();
-        const pc = new RTCPeerConnection({
-            iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-        });
-        pc.createDataChannel('');
-        pc.createOffer().then(offer => pc.setLocalDescription(offer));
-        pc.onicecandidate = (ice) => {
-            if (!ice || !ice.candidate || !ice.candidate.candidate) {
-                resolve(ips.size > 1);
-                return;
-            }
-            const match = ice.candidate.candidate.match(/([0-9]{1,3}\.){3}[0-9]{1,3}/);
-            if (match) ips.add(match[0]);
-            if (ips.size > 1) {
+        try {
+            const pc = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            });
+            pc.createDataChannel('');
+            pc.createOffer().then(offer => pc.setLocalDescription(offer));
+            pc.onicecandidate = (ice) => {
+                if (!ice || !ice.candidate || !ice.candidate.candidate) {
+                    resolve(ips.size > 1);
+                    return;
+                }
+                const match = ice.candidate.candidate.match(/([0-9]{1,3}\.){3}[0-9]{1,3}/);
+                if (match) ips.add(match[0]);
+                if (ips.size > 1) {
+                    pc.close();
+                    resolve(true);
+                }
+            };
+            setTimeout(() => {
                 pc.close();
-                resolve(true);
-            }
-        };
-        setTimeout(() => {
-            pc.close();
-            resolve(ips.size > 1);
-        }, 4000);
+                resolve(ips.size > 1);
+            }, 4000);
+        } catch {
+            resolve(false);
+        }
     });
 }
 
 function blockVPN() {
     document.body.innerHTML = `
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#0f0f1a;color:#fff;text-align:center;padding:20px">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#1e2b38;color:#c8d6e5;text-align:center;padding:20px">
             <div style="font-size:64px;margin-bottom:20px">🚫</div>
             <h1 style="font-size:24px;margin-bottom:12px">VPN Detected!</h1>
-            <p style="color:#ff4444;font-size:16px">Please turn off your VPN to access this site.</p>
-            <p style="color:#666;font-size:13px;margin-top:8px">VPN ব্যবহার করা যাবে না। অনুগ্রহ করে VPN বন্ধ করুন।</p>
+            <p style="color:#e74c3c;font-size:16px">Please turn off your VPN to access this site.</p>
+            <p style="color:#7a8a9a;font-size:13px;margin-top:8px">VPN ব্যবহার করা যাবে না। অনুগ্রহ করে VPN বন্ধ করুন।</p>
         </div>
     `;
 }
@@ -126,8 +129,8 @@ function renderFilters() {
     if (!container) return;
     const filters = [
         { key: 'all', label: 'All' },
-        { key: 'bonus', label: '🎁 Bonus Ads' },
-        { key: 'video', label: '🎬 Video Ads' }
+        { key: 'bonus', label: 'Bonus Ads' },
+        { key: 'video', label: 'Video Ads' }
     ];
     container.innerHTML = filters.map(f =>
         `<button class="filter-btn ${state.activeFilter === f.key ? 'active' : ''}" data-filter="${f.key}">${f.label}</button>`
@@ -149,12 +152,17 @@ function renderAds() {
     const filtered = getFilteredAds();
     const totalInFilter = filtered.length;
     const completedInFilter = filtered.filter(a => state.completedAds.includes(a.id)).length;
+    const totalEarned = state.completedAds.reduce((sum, id) => {
+        const ad = AD_LINKS.find(a => a.id === id);
+        return sum + (ad ? ad.reward : 0);
+    }, 0);
 
     counter.textContent = `${completedInFilter}/${totalInFilter}`;
+    document.getElementById('totalEarned').textContent = totalEarned.toFixed(2);
 
     container.innerHTML = '';
     if (filtered.length === 0) {
-        container.innerHTML = '<p style="color:#555;text-align:center;padding:20px">No ads in this category</p>';
+        container.innerHTML = '<p style="color:#6a7a8a;text-align:center;padding:20px">No ads available</p>';
         return;
     }
 
@@ -167,8 +175,8 @@ function renderAds() {
         div.className = `ad-item ${completed ? 'completed' : ''} ${locked ? 'locked' : ''}`;
         div.innerHTML = `
             <div class="ad-info">
-                <h4>${ad.type === 'video' ? '🎬' : '🎁'} ${ad.name} ${locked ? '🔒' : ''}</h4>
-                <p>${completed ? 'Completed ✓' : locked ? 'Complete previous ad first' : 'Click to watch & earn'}</p>
+                <h4>${ad.name}</h4>
+                <p>${completed ? 'Completed' : locked ? 'Complete previous ad to unlock' : 'Click to watch'}</p>
             </div>
             <span class="ad-reward">+$${ad.reward.toFixed(2)}</span>
             <button class="btn btn-sm" data-index="${globalIndex}" ${completed || locked ? 'disabled' : ''}>
@@ -189,6 +197,7 @@ function renderAds() {
 }
 
 function startAd(index) {
+    if (state.isVpnBlocked) { blockVPN(); return; }
     state.currentAdIndex = index;
     const ad = AD_LINKS[index];
     const modal = document.getElementById('adModal');
@@ -203,11 +212,11 @@ function startAd(index) {
     visitBtn.style.display = 'none';
 
     contentEl.innerHTML = `
-        <div style="padding: 20px; background: #1a1a3e; border-radius: 8px;">
-            <h4 style="color: #00d4ff; margin-bottom: 8px;">${ad.name}</h4>
-            <p style="color: #888; font-size: 12px;">Sponsored Advertisement</p>
-            <div style="margin-top: 12px; padding: 20px; background: #0f0f1a; border-radius: 8px;">
-                <p style="color: #555;">Ad content loading...</p>
+        <div style="padding:16px;text-align:center">
+            <h4 style="color:#88c7f7;font-size:14px;margin-bottom:8px">${ad.name}</h4>
+            <p style="color:#6a7a8a;font-size:11px">Sponsored Advertisement</p>
+            <div style="margin-top:12px;padding:20px;background:#1e2b38;border-radius:3px">
+                <p style="color:#5a6a7a">Ad content loading...</p>
             </div>
         </div>
     `;
@@ -220,8 +229,8 @@ function startAd(index) {
         timerEl.textContent = countdown;
         if (countdown <= 0) {
             clearInterval(timer);
-            timerEl.textContent = '✓';
-            statusEl.textContent = 'Ad completed! You can now visit the link.';
+            timerEl.textContent = 'OK';
+            statusEl.textContent = 'Ad completed! Click the button to visit the link.';
             visitBtn.style.display = 'block';
         }
     }, 1000);
@@ -248,11 +257,9 @@ function completeAd(ad) {
 }
 
 function showCongrats() {
-    const modal = document.getElementById('congratsModal');
-    modal.classList.add('active');
-
+    document.getElementById('congratsModal').classList.add('active');
     document.getElementById('closeCongrats').onclick = () => {
-        modal.classList.remove('active');
+        document.getElementById('congratsModal').classList.remove('active');
     };
 }
 
@@ -262,11 +269,7 @@ function checkReferral() {
     if (ref && ref !== getRefCode()) {
         const existing = state.referrals.find(r => r.code === ref);
         if (!existing) {
-            state.referrals.push({
-                code: ref,
-                time: Date.now(),
-                activated: false
-            });
+            state.referrals.push({ code: ref, time: Date.now(), activated: false });
             saveState();
         }
     }
@@ -287,44 +290,23 @@ function processReferrals() {
 }
 
 function updateUI() {
-    const bal = document.getElementById('balanceDisplay');
-    if (bal) bal.textContent = `$${state.balance.toFixed(2)}`;
-
-    const withdrawBtn = document.getElementById('withdrawBtn');
-    if (withdrawBtn) {
-        withdrawBtn.disabled = state.balance < MIN_WITHDRAWAL;
-    }
-
-    const refCount = document.getElementById('refCount');
-    if (refCount) refCount.textContent = state.referrals.length;
-
-    const refActive = document.getElementById('refActive');
-    if (refActive) {
-        const active = state.referrals.filter(r => r.activated).length;
-        refActive.textContent = active;
-    }
-
-    const refEarn = document.getElementById('refEarnings');
-    if (refEarn) refEarn.textContent = state.refEarnings.toFixed(2);
+    document.getElementById('balanceDisplay').textContent = `$${state.balance.toFixed(2)}`;
+    document.getElementById('withdrawBtn').disabled = state.balance < MIN_WITHDRAWAL;
+    document.getElementById('refCount').textContent = state.referrals.length;
+    document.getElementById('refEarnings').textContent = state.refEarnings.toFixed(2);
 }
 
 async function initVPNCheck() {
-    const vpn = await detectVPN();
-    state.isVpnBlocked = vpn;
-    if (vpn) {
-        blockVPN();
-        return true;
-    }
+    state.isVpnBlocked = await detectVPN();
+    if (state.isVpnBlocked) { blockVPN(); return true; }
     return false;
 }
 
 function setupRefLink() {
     const refInput = document.getElementById('refLink');
     if (refInput) {
-        const url = `${window.location.origin}${window.location.pathname}?ref=${getRefCode()}`;
-        refInput.value = url;
+        refInput.value = `${window.location.origin}${window.location.pathname}?ref=${getRefCode()}`;
     }
-
     document.getElementById('copyRefBtn')?.addEventListener('click', () => {
         refInput.select();
         navigator.clipboard.writeText(refInput.value);
@@ -335,28 +317,19 @@ function setupModals() {
     document.getElementById('closeAdModal')?.addEventListener('click', () => {
         document.getElementById('adModal').classList.remove('active');
     });
-
     document.getElementById('closeWithdrawModal')?.addEventListener('click', () => {
         document.getElementById('withdrawModal').classList.remove('active');
     });
-
     document.getElementById('withdrawBtn')?.addEventListener('click', () => {
         document.getElementById('withdrawModal').classList.add('active');
     });
-
     document.querySelectorAll('input[name="payment"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
-            const label = document.getElementById('addressLabel');
-            if (e.target.value === 'usdt') {
-                label.textContent = 'USDT Address (BEP20)';
-            } else {
-                label.textContent = 'Litecoin Address';
-            }
+            document.getElementById('addressLabel').textContent =
+                e.target.value === 'usdt' ? 'USDT Address (BEP20)' : 'Litecoin Address';
         });
     });
-
     document.getElementById('submitWithdraw')?.addEventListener('click', handleWithdraw);
-
     window.addEventListener('click', (e) => {
         document.querySelectorAll('.modal.active').forEach(modal => {
             if (e.target === modal) modal.classList.remove('active');
@@ -375,27 +348,23 @@ function handleWithdraw() {
         msgEl.textContent = `Minimum withdrawal is $${MIN_WITHDRAWAL.toFixed(2)}`;
         return;
     }
-
     if (amount > state.balance) {
         msgEl.className = 'msg error';
         msgEl.textContent = 'Insufficient balance';
         return;
     }
-
     if (!address) {
         msgEl.className = 'msg error';
-        msgEl.textContent = 'Please enter your wallet address';
+        msgEl.textContent = 'Enter your wallet address';
         return;
     }
-
-    const currency = payment === 'usdt' ? 'USDT (BEP20)' : 'Litecoin';
 
     state.balance -= amount;
     saveState();
     updateUI();
 
     msgEl.className = 'msg success';
-    msgEl.textContent = `Withdrawal request submitted!\n$${amount.toFixed(2)} → ${currency}\nAddress: ${address.substr(0, 8)}...`;
+    msgEl.textContent = `Request submitted! $${amount.toFixed(2)} → ${payment === 'usdt' ? 'USDT' : 'LTC'} | ${address.substr(0,8)}...`;
 
     setTimeout(() => {
         document.getElementById('withdrawModal').classList.remove('active');
@@ -404,16 +373,14 @@ function handleWithdraw() {
 }
 
 (async () => {
-    const vpnBlocked = await initVPNCheck();
-    if (!vpnBlocked) {
-        loadState();
-        checkReferral();
-        processReferrals();
-        resetDailyAds();
-        renderFilters();
-        renderAds();
-        setupRefLink();
-        setupModals();
-        setInterval(processReferrals, 60000);
-    }
+    if (await initVPNCheck()) return;
+    loadState();
+    checkReferral();
+    processReferrals();
+    resetDailyAds();
+    renderFilters();
+    renderAds();
+    setupRefLink();
+    setupModals();
+    setInterval(processReferrals, 60000);
 })();
