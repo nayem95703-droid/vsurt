@@ -19,6 +19,7 @@ const AD_LINKS = [
 const MIN_WITHDRAWAL = 5.0;
 const REF_REWARD = 0.25;
 const REF_ACTIVATE_HOURS = 48;
+const AD_COOLDOWN_MINUTES = 30;
 
 let state = {
     balance: 0,
@@ -27,7 +28,8 @@ let state = {
     isVpnBlocked: false,
     referrals: [],
     refEarnings: 0,
-    activeFilter: 'all'
+    activeFilter: 'all',
+    nextAdTime: 0
 };
 
 function detectVPN() {
@@ -90,6 +92,7 @@ function loadState() {
             state.completedAds = parsed.completedAds || [];
             state.referrals = parsed.referrals || [];
             state.refEarnings = parsed.refEarnings || 0;
+            state.nextAdTime = parsed.nextAdTime || 0;
         } catch {}
     }
 }
@@ -99,7 +102,8 @@ function saveState() {
         balance: state.balance,
         completedAds: state.completedAds,
         referrals: state.referrals,
-        refEarnings: state.refEarnings
+        refEarnings: state.refEarnings,
+        nextAdTime: state.nextAdTime
     }));
 }
 
@@ -152,12 +156,27 @@ function renderAds() {
     const filtered = getFilteredAds();
     const totalInFilter = filtered.length;
     const completedInFilter = filtered.filter(a => state.completedAds.includes(a.id)).length;
+    const now = Date.now();
+    const onCooldown = state.nextAdTime > now;
 
     counter.textContent = `${completedInFilter}/${totalInFilter}`;
 
     container.innerHTML = '';
     if (filtered.length === 0) {
-        container.innerHTML = '<p style="color:#6a7a8a;text-align:center;padding:20px">No ads available</p>';
+        container.innerHTML = '<p style="color:#555;text-align:center;padding:20px">No ads available</p>';
+        return;
+    }
+
+    if (onCooldown && completedInFilter === totalInFilter) {
+        const mins = Math.ceil((state.nextAdTime - now) / 60000);
+        container.innerHTML = `
+            <div style="text-align:center;padding:30px;color:#888">
+                <div style="font-size:40px;margin-bottom:12px">⏰</div>
+                <p>All ads completed! Next ads available in</p>
+                <p style="font-size:24px;color:#00d4ff;font-weight:bold;margin-top:8px" id="cooldownTimer">${mins}:00</p>
+            </div>
+        `;
+        startCooldownTimer();
         return;
     }
 
@@ -165,17 +184,18 @@ function renderAds() {
         const completed = state.completedAds.includes(ad.id);
         const prevDone = isPrevCompleted(ad, filtered);
         const locked = !completed && !prevDone;
+        const cooldownLocked = onCooldown && !completed;
         const globalIndex = AD_LINKS.indexOf(ad);
         const div = document.createElement('div');
-        div.className = `ad-item ${completed ? 'completed' : ''} ${locked ? 'locked' : ''}`;
+        div.className = `ad-item ${completed ? 'completed' : ''} ${(locked || cooldownLocked) ? 'locked' : ''}`;
         div.innerHTML = `
             <div class="ad-info">
                 <h4>${ad.name}</h4>
-                <p>${completed ? 'Completed' : locked ? 'Complete previous ad to unlock' : 'Click to watch'}</p>
+                <p>${completed ? 'Completed' : (locked ? 'Complete previous ad' : (cooldownLocked ? 'Wait for cooldown' : 'Click to watch'))}</p>
             </div>
             <span class="ad-reward">+$${ad.reward.toFixed(2)}</span>
-            <button class="btn btn-sm" data-index="${globalIndex}" ${completed || locked ? 'disabled' : ''}>
-                ${completed ? 'Done' : locked ? 'Locked' : 'Start'}
+            <button class="btn btn-sm" data-index="${globalIndex}" ${completed || locked || cooldownLocked ? 'disabled' : ''}>
+                ${completed ? 'Done' : (locked ? 'Locked' : 'Start')}
             </button>
         `;
         container.appendChild(div);
@@ -191,8 +211,36 @@ function renderAds() {
     updateUI();
 }
 
+let cooldownInterval = null;
+
+function startCooldownTimer() {
+    if (cooldownInterval) clearInterval(cooldownInterval);
+    cooldownInterval = setInterval(() => {
+        const now = Date.now();
+        const remaining = Math.max(0, state.nextAdTime - now);
+        const mins = Math.floor(remaining / 60000);
+        const secs = Math.floor((remaining % 60000) / 1000);
+        const el = document.getElementById('cooldownTimer');
+        if (el) el.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        if (remaining <= 0) {
+            clearInterval(cooldownInterval);
+            cooldownInterval = null;
+            state.completedAds = [];
+            state.nextAdTime = 0;
+            saveState();
+            renderAds();
+        }
+    }, 1000);
+}
+
 function startAd(index) {
     if (state.isVpnBlocked) { blockVPN(); return; }
+    const now = Date.now();
+    if (state.nextAdTime > now) {
+        renderAds();
+        return;
+    }
+
     state.currentAdIndex = index;
     const ad = AD_LINKS[index];
     const modal = document.getElementById('adModal');
@@ -202,21 +250,34 @@ function startAd(index) {
     const contentEl = document.getElementById('adContent');
 
     modal.classList.add('active');
-    timerEl.textContent = '5';
+    timerEl.textContent = '...';
     statusEl.textContent = 'Loading ad...';
     visitBtn.style.display = 'none';
 
     contentEl.innerHTML = `
-        <div style="padding:16px;text-align:center">
-            <h4 style="color:#88c7f7;font-size:14px;margin-bottom:8px">${ad.name}</h4>
-            <p style="color:#6a7a8a;font-size:11px">Sponsored Advertisement</p>
-            <div style="margin-top:12px;padding:20px;background:#1e2b38;border-radius:3px">
-                <p style="color:#5a6a7a">Ad content loading...</p>
+        <div style="padding:20px;text-align:center">
+            <h4 style="color:#00d4ff;font-size:15px;margin-bottom:8px">${ad.name}</h4>
+            <p style="color:#888;font-size:12px">Sponsored Advertisement</p>
+            <div style="margin-top:12px;padding:20px;background:#0f0f1a;border-radius:8px">
+                <p style="color:#555">Loading ad content...</p>
             </div>
         </div>
     `;
 
+    if (typeof show_11248447 === 'function') {
+        show_11248447().then(() => {
+            startAdTimer(ad, modal, timerEl, statusEl, visitBtn);
+        }).catch(() => {
+            startAdTimer(ad, modal, timerEl, statusEl, visitBtn);
+        });
+    } else {
+        startAdTimer(ad, modal, timerEl, statusEl, visitBtn);
+    }
+}
+
+function startAdTimer(ad, modal, timerEl, statusEl, visitBtn) {
     let countdown = 5;
+    timerEl.textContent = countdown;
     statusEl.textContent = `Watch ad for ${countdown} seconds...`;
 
     const timer = setInterval(() => {
@@ -225,7 +286,7 @@ function startAd(index) {
         if (countdown <= 0) {
             clearInterval(timer);
             timerEl.textContent = 'OK';
-            statusEl.textContent = 'Ad completed! Click the button to visit the link.';
+            statusEl.textContent = 'Ad completed! Click to visit the link.';
             visitBtn.style.display = 'block';
         }
     }, 1000);
@@ -247,6 +308,8 @@ function completeAd(ad) {
     updateUI();
 
     if (state.completedAds.length === AD_LINKS.length) {
+        state.nextAdTime = Date.now() + AD_COOLDOWN_MINUTES * 60 * 1000;
+        saveState();
         setTimeout(showCongrats, 500);
     }
 }

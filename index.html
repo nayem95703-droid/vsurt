@@ -25,8 +25,8 @@
             <div id="filterTabs" class="filter-tabs"></div>
             <div id="adsContainer"></div>
             <div class="surf-info">
-                <p>5 Bonus Ads ($0.06 each) + 10 Video Ads ($0.03 each)</p>
-                <p>Complete previous ad to unlock next one</p>
+                <p>5 Bonus Ads ($0.06) + 10 Video Ads ($0.03)</p>
+                <p>Ads reset every <strong>30 minutes</strong></p>
             </div>
         </div>
 
@@ -114,12 +114,38 @@
             <div class="modal-body" style="text-align:center">
                 <div style="font-size:64px;margin:16px 0">🏆</div>
                 <h2>You completed all ads!</h2>
-                <p>Keep watching daily to earn more!</p>
+                <p>Next ads available in 30 minutes</p>
                 <button class="btn btn-primary" id="closeCongrats" style="margin-top:16px">Awesome!</button>
             </div>
         </div>
     </div>
 
+    <script>
+        // ===== AD SDK Integration =====
+        // Replace with your actual ad network script
+        // Example: show_11248447 - Rewarded Interstitial
+        // Example: show_11248447('pop') - Rewarded Popup
+        // Example: show_11248447({type:'inApp',inAppSettings:{...}}) - In-App
+
+        function show_11248447(format) {
+            return new Promise((resolve, reject) => {
+                if (format === 'pop') {
+                    // Rewarded Popup
+                    const popup = window.open('about:blank', '_blank', 'width=400,height=600');
+                    setTimeout(() => {
+                        if (popup) popup.close();
+                        resolve();
+                    }, 3000);
+                } else if (format && format.type === 'inApp') {
+                    // In-App Interstitial
+                    setTimeout(resolve, 2000);
+                } else {
+                    // Rewarded Interstitial (default)
+                    setTimeout(resolve, 3000);
+                }
+            });
+        }
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
