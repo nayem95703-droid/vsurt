@@ -265,7 +265,25 @@ function startAd(index) {
     `;
 
     if (typeof show_11248447 === 'function') {
-        show_11248447().then(() => {
+        const adIndex = state.completedAds.length % 3;
+        let adPromise;
+        if (adIndex === 0) {
+            adPromise = show_11248447();
+        } else if (adIndex === 1) {
+            adPromise = show_11248447('pop');
+        } else {
+            adPromise = show_11248447({
+                type: 'inApp',
+                inAppSettings: {
+                    frequency: 2,
+                    capping: 0.1,
+                    interval: 30,
+                    timeout: 5,
+                    everyPage: false
+                }
+            });
+        }
+        adPromise.then(() => {
             startAdTimer(ad, modal, timerEl, statusEl, visitBtn);
         }).catch(() => {
             startAdTimer(ad, modal, timerEl, statusEl, visitBtn);

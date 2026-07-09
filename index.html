@@ -120,32 +120,7 @@
         </div>
     </div>
 
-    <script>
-        // ===== AD SDK Integration =====
-        // Replace with your actual ad network script
-        // Example: show_11248447 - Rewarded Interstitial
-        // Example: show_11248447('pop') - Rewarded Popup
-        // Example: show_11248447({type:'inApp',inAppSettings:{...}}) - In-App
-
-        function show_11248447(format) {
-            return new Promise((resolve, reject) => {
-                if (format === 'pop') {
-                    // Rewarded Popup
-                    const popup = window.open('about:blank', '_blank', 'width=400,height=600');
-                    setTimeout(() => {
-                        if (popup) popup.close();
-                        resolve();
-                    }, 3000);
-                } else if (format && format.type === 'inApp') {
-                    // In-App Interstitial
-                    setTimeout(resolve, 2000);
-                } else {
-                    // Rewarded Interstitial (default)
-                    setTimeout(resolve, 3000);
-                }
-            });
-        }
-    </script>
+    <script src='//libtl.com/sdk.js' data-zone='11248447' data-sdk='show_11248447'></script>
     <script src="script.js"></script>
 </body>
 </html>
