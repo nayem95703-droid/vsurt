@@ -94,6 +94,36 @@ body {
     color: #aaa;
 }
 
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 1px solid #333;
+    border-radius: 20px;
+    background: transparent;
+    color: #888;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background: #7b2ff7;
+    color: #fff;
+    border-color: #7b2ff7;
+}
+
+.filter-btn:hover:not(.active) {
+    border-color: #7b2ff7;
+    color: #ccc;
+}
+
 .ad-item.locked {
     opacity: 0.4;
 }

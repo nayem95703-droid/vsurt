@@ -1,9 +1,19 @@
 const AD_LINKS = [
-    { id: 1, name: 'Ad Network A', reward: 0.06, url: 'https://example.com/offer1' },
-    { id: 2, name: 'Ad Network B', reward: 0.06, url: 'https://example.com/offer2' },
-    { id: 3, name: 'Ad Network C', reward: 0.06, url: 'https://example.com/offer3' },
-    { id: 4, name: 'Ad Network D', reward: 0.06, url: 'https://example.com/offer4' },
-    { id: 5, name: 'Ad Network E', reward: 0.06, url: 'https://example.com/offer5' }
+    { id: 1, name: 'Bonus Ad 1', reward: 0.06, url: 'https://example.com/bonus1', type: 'bonus' },
+    { id: 2, name: 'Bonus Ad 2', reward: 0.06, url: 'https://example.com/bonus2', type: 'bonus' },
+    { id: 3, name: 'Bonus Ad 3', reward: 0.06, url: 'https://example.com/bonus3', type: 'bonus' },
+    { id: 4, name: 'Bonus Ad 4', reward: 0.06, url: 'https://example.com/bonus4', type: 'bonus' },
+    { id: 5, name: 'Bonus Ad 5', reward: 0.06, url: 'https://example.com/bonus5', type: 'bonus' },
+    { id: 6, name: 'Video Ad 1', reward: 0.03, url: 'https://example.com/video1', type: 'video' },
+    { id: 7, name: 'Video Ad 2', reward: 0.03, url: 'https://example.com/video2', type: 'video' },
+    { id: 8, name: 'Video Ad 3', reward: 0.03, url: 'https://example.com/video3', type: 'video' },
+    { id: 9, name: 'Video Ad 4', reward: 0.03, url: 'https://example.com/video4', type: 'video' },
+    { id: 10, name: 'Video Ad 5', reward: 0.03, url: 'https://example.com/video5', type: 'video' },
+    { id: 11, name: 'Video Ad 6', reward: 0.03, url: 'https://example.com/video6', type: 'video' },
+    { id: 12, name: 'Video Ad 7', reward: 0.03, url: 'https://example.com/video7', type: 'video' },
+    { id: 13, name: 'Video Ad 8', reward: 0.03, url: 'https://example.com/video8', type: 'video' },
+    { id: 14, name: 'Video Ad 9', reward: 0.03, url: 'https://example.com/video9', type: 'video' },
+    { id: 15, name: 'Video Ad 10', reward: 0.03, url: 'https://example.com/video10', type: 'video' }
 ];
 
 const PER_AD_REWARD = 0.06;
@@ -17,7 +27,8 @@ let state = {
     currentAdIndex: -1,
     isVpnBlocked: false,
     referrals: [],
-    refEarnings: 0
+    refEarnings: 0,
+    activeFilter: 'all'
 };
 
 function detectVPN() {
@@ -99,27 +110,68 @@ function resetDailyAds() {
     }
 }
 
+function getFilteredAds() {
+    if (state.activeFilter === 'all') return AD_LINKS;
+    return AD_LINKS.filter(ad => ad.type === state.activeFilter);
+}
+
+function isPrevCompleted(ad, filtered) {
+    const idx = filtered.indexOf(ad);
+    if (idx === 0) return true;
+    return state.completedAds.includes(filtered[idx - 1].id);
+}
+
+function renderFilters() {
+    const container = document.getElementById('filterTabs');
+    if (!container) return;
+    const filters = [
+        { key: 'all', label: 'All' },
+        { key: 'bonus', label: '🎁 Bonus Ads' },
+        { key: 'video', label: '🎬 Video Ads' }
+    ];
+    container.innerHTML = filters.map(f =>
+        `<button class="filter-btn ${state.activeFilter === f.key ? 'active' : ''}" data-filter="${f.key}">${f.label}</button>`
+    ).join('');
+    container.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            state.activeFilter = btn.dataset.filter;
+            renderFilters();
+            renderAds();
+        });
+    });
+}
+
 function renderAds() {
     const container = document.getElementById('adsContainer');
     const counter = document.getElementById('adCounter');
     if (!container) return;
 
-    counter.textContent = `${state.completedAds.length}/${AD_LINKS.length}`;
+    const filtered = getFilteredAds();
+    const totalInFilter = filtered.length;
+    const completedInFilter = filtered.filter(a => state.completedAds.includes(a.id)).length;
+
+    counter.textContent = `${completedInFilter}/${totalInFilter}`;
 
     container.innerHTML = '';
-    AD_LINKS.forEach((ad, index) => {
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="color:#555;text-align:center;padding:20px">No ads in this category</p>';
+        return;
+    }
+
+    filtered.forEach((ad, i) => {
         const completed = state.completedAds.includes(ad.id);
-        const prevCompleted = index === 0 || state.completedAds.includes(AD_LINKS[index - 1].id);
-        const locked = !completed && !prevCompleted;
+        const prevDone = isPrevCompleted(ad, filtered);
+        const locked = !completed && !prevDone;
+        const globalIndex = AD_LINKS.indexOf(ad);
         const div = document.createElement('div');
         div.className = `ad-item ${completed ? 'completed' : ''} ${locked ? 'locked' : ''}`;
         div.innerHTML = `
             <div class="ad-info">
-                <h4>${ad.name} ${locked ? '🔒' : ''}</h4>
+                <h4>${ad.type === 'video' ? '🎬' : '🎁'} ${ad.name} ${locked ? '🔒' : ''}</h4>
                 <p>${completed ? 'Completed ✓' : locked ? 'Complete previous ad first' : 'Click to watch & earn'}</p>
             </div>
             <span class="ad-reward">+$${ad.reward.toFixed(2)}</span>
-            <button class="btn btn-sm" data-index="${index}" ${completed || locked ? 'disabled' : ''}>
+            <button class="btn btn-sm" data-index="${globalIndex}" ${completed || locked ? 'disabled' : ''}>
                 ${completed ? 'Done' : locked ? 'Locked' : 'Start'}
             </button>
         `;
@@ -197,8 +249,6 @@ function completeAd(ad) {
 
 function showCongrats() {
     const modal = document.getElementById('congratsModal');
-    const amount = document.getElementById('congratsAmount');
-    amount.textContent = `$${(AD_LINKS.length * PER_AD_REWARD).toFixed(2)}`;
     modal.classList.add('active');
 
     document.getElementById('closeCongrats').onclick = () => {
@@ -360,6 +410,7 @@ function handleWithdraw() {
         checkReferral();
         processReferrals();
         resetDailyAds();
+        renderFilters();
         renderAds();
         setupRefLink();
         setupModals();
