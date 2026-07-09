@@ -1,0 +1,380 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 80px;
+}
+
+.header {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.header h1 {
+    font-size: 28px;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header p {
+    color: #888;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.balance-card {
+    background: linear-gradient(135deg, #1a1a3e, #2d1b69);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 20px;
+    border: 1px solid rgba(123, 47, 247, 0.3);
+}
+
+.balance-card span {
+    color: #aaa;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.balance-card h2 {
+    font-size: 36px;
+    margin-top: 8px;
+    color: #fff;
+}
+
+.vpn-warning {
+    background: #ff4444;
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    display: none;
+    margin-bottom: 16px;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.section {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+}
+
+.section h3 {
+    font-size: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.badge {
+    background: #7b2ff7;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.ad-item {
+    background: #222244;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+}
+
+.ad-item.completed {
+    opacity: 0.5;
+    background: #1a1a30;
+}
+
+.ad-item .ad-info {
+    flex: 1;
+}
+
+.ad-item .ad-info h4 {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.ad-item .ad-info p {
+    font-size: 11px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.ad-item .ad-reward {
+    color: #00d4ff;
+    font-weight: 600;
+    font-size: 13px;
+    margin-right: 10px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: #7b2ff7;
+    color: #fff;
+    width: 100%;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #6a1fd6;
+}
+
+.btn-success {
+    background: #00c853;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: #00a844;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    background: #333;
+    color: #ccc;
+}
+
+.ref-link {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.ref-link input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #0f0f1a;
+    color: #ccc;
+    font-size: 12px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #1a1a2e;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid #2a2a4a;
+}
+
+.congrats-content {
+    border-color: #ffd700;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #2a2a4a;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.close {
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.ad-timer {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #7b2ff7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 auto 16px;
+}
+
+.ad-placeholder {
+    background: #0f0f1a;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin: 16px 0;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #333;
+}
+
+.ad-placeholder .ad-box p {
+    color: #555;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.ad-content img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.payment-option {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.radio-label {
+    flex: 1;
+    background: #0f0f1a;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.radio-label:has(input:checked) {
+    border-color: #7b2ff7;
+    background: #1a1a3e;
+}
+
+.radio-label input {
+    margin-right: 6px;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 6px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #0f0f1a;
+    color: #fff;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #7b2ff7;
+}
+
+.msg {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+.msg.success {
+    color: #00c853;
+}
+
+.msg.error {
+    color: #ff4444;
+}
+
+.congrats-icon {
+    font-size: 64px;
+    text-align: center;
+    margin: 16px 0;
+}
+
+.modal-body h2 {
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 20px;
+}
+
+.modal-body p {
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 8px;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    color: #555;
+    font-size: 12px;
+}

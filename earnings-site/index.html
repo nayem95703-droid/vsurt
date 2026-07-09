@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EarnPro - Watch Ads & Earn</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>EarnPro</h1>
+            <p>Watch Ads. Earn Money. Withdraw Anytime.</p>
+            <div class="balance-card">
+                <span>Balance</span>
+                <h2 id="balanceDisplay">$0.00</h2>
+            </div>
+        </div>
+
+        <div class="vpn-warning" id="vpnWarning">
+            VPN detected! Please disable VPN to use this site.
+        </div>
+
+        <div class="section">
+            <h3>Today's Ads <span id="adCounter" class="badge">0/10</span></h3>
+            <div id="adsContainer">
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Withdraw</h3>
+            <div class="withdraw-info">
+                <p>Minimum withdrawal: <strong>$1.00</strong></p>
+                <p>Payment: USDT (Binance) / Litecoin</p>
+            </div>
+            <button class="btn btn-primary" id="withdrawBtn" disabled>Withdraw</button>
+        </div>
+
+        <div class="section">
+            <h3>Referral</h3>
+            <p>Share your link and earn 10% of your referral's earnings!</p>
+            <div class="ref-link">
+                <input type="text" id="refLink" readonly>
+                <button class="btn btn-sm" id="copyRefBtn">Copy</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 EarnPro. All rights reserved.</p>
+        </div>
+    </div>
+
+    <div class="modal" id="adModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Watch Ad</h3>
+                <span class="close" id="closeAdModal">&times;</span>
+            </div>
+            <div class="modal-body" id="adModalBody">
+                <div class="ad-timer" id="adTimer">5</div>
+                <p id="adStatus">Loading ad...</p>
+                <div class="ad-placeholder" id="adPlaceholder">
+                    <div class="ad-box">
+                        <p>Sponsored Content</p>
+                        <div class="ad-content" id="adContent">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-success" id="adVisitBtn" style="display:none">Visit Link</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Withdraw Funds</h3>
+                <span class="close" id="closeWithdrawModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="payment-option">
+                    <label class="radio-label">
+                        <input type="radio" name="payment" value="usdt" checked>
+                        USDT (Binance)
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="payment" value="litecoin">
+                        Litecoin
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="withdrawAmount" min="1" step="0.01" value="1">
+                </div>
+                <div class="form-group">
+                    <label id="addressLabel">USDT Address (BEP20)</label>
+                    <input type="text" id="walletAddress" placeholder="Enter your wallet address">
+                </div>
+                <button class="btn btn-primary" id="submitWithdraw">Submit Withdrawal</button>
+                <p id="withdrawMsg" class="msg"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="congratsModal">
+        <div class="modal-content congrats-content">
+            <div class="modal-header">
+                <h3>Congratulations! 🎉</h3>
+            </div>
+            <div class="modal-body">
+                <div class="congrats-icon">🏆</div>
+                <h2>You completed all 10 ads!</h2>
+                <p>You earned <strong id="congratsAmount">$0.50</strong></p>
+                <p>Keep watching daily to earn more!</p>
+                <button class="btn btn-primary" id="closeCongrats">Awesome!</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
