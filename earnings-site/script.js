@@ -209,10 +209,6 @@ function showCongrats() {
     document.getElementById('closeCongrats').onclick = () => {
         modal.classList.remove('active');
     };
-
-    sendTelegramNotification(
-        `🎉 User completed all 10 ads!\nEarned: $${(AD_LINKS.length * PER_AD_REWARD).toFixed(2)}\nRef: ${getRefCode()}`
-    );
 }
 
 function updateUI() {
@@ -312,22 +308,10 @@ function handleWithdraw() {
     msgEl.className = 'msg success';
     msgEl.textContent = `Withdrawal request submitted!\n$${amount.toFixed(2)} → ${currency}\nAddress: ${address.substr(0, 8)}...`;
 
-    sendTelegramNotification(
-        `💸 Withdrawal Request\nAmount: $${amount.toFixed(2)}\nMethod: ${currency}\nAddress: ${address}\nRef: ${getRefCode()}`
-    );
-
     setTimeout(() => {
         document.getElementById('withdrawModal').classList.remove('active');
         msgEl.textContent = '';
     }, 3000);
-}
-
-function sendTelegramNotification(message) {
-    fetch('/api/telegram', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
-    }).catch(() => {});
 }
 
 initVPNCheck();
