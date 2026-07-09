@@ -323,15 +323,10 @@ function handleWithdraw() {
 }
 
 function sendTelegramNotification(message) {
-    const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    fetch(telegramUrl, {
+    fetch('/api/telegram', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: message,
-            parse_mode: 'HTML'
-        })
+        body: JSON.stringify({ message })
     }).catch(() => {});
 }
 
