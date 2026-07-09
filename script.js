@@ -243,13 +243,24 @@ function startAd(index) {
 
     state.currentAdIndex = index;
     const ad = AD_LINKS[index];
+    const overlay = document.getElementById('adLoadingOverlay');
+
+    function rewardAndNext() {
+        if (overlay) overlay.style.display = 'none';
+        completeAd(ad);
+        if (state.completedAds.length < AD_LINKS.length) {
+            setTimeout(() => startNextAd(), 800);
+        }
+    }
+
+    if (overlay) overlay.style.display = 'flex';
 
     if (typeof show_11248447 === 'function') {
-        const adIndex = state.completedAds.length % 3;
+        const adType = state.completedAds.length % 3;
         let adPromise;
-        if (adIndex === 0) {
+        if (adType === 0) {
             adPromise = show_11248447();
-        } else if (adIndex === 1) {
+        } else if (adType === 1) {
             adPromise = show_11248447('pop');
         } else {
             adPromise = show_11248447({
@@ -263,16 +274,10 @@ function startAd(index) {
                 }
             });
         }
-        adPromise.then(() => {
-            completeAd(ad);
-            if (state.completedAds.length < AD_LINKS.length) {
-                setTimeout(() => startNextAd(), 500);
-            }
-        }).catch(() => {
-            completeAd(ad);
-        });
+        const timeout = new Promise(resolve => setTimeout(resolve, 8000));
+        Promise.race([adPromise, timeout]).then(rewardAndNext).catch(rewardAndNext);
     } else {
-        completeAd(ad);
+        setTimeout(rewardAndNext, 2000);
     }
 }
 
