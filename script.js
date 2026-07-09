@@ -152,13 +152,8 @@ function renderAds() {
     const filtered = getFilteredAds();
     const totalInFilter = filtered.length;
     const completedInFilter = filtered.filter(a => state.completedAds.includes(a.id)).length;
-    const totalEarned = state.completedAds.reduce((sum, id) => {
-        const ad = AD_LINKS.find(a => a.id === id);
-        return sum + (ad ? ad.reward : 0);
-    }, 0);
 
     counter.textContent = `${completedInFilter}/${totalInFilter}`;
-    document.getElementById('totalEarned').textContent = totalEarned.toFixed(2);
 
     container.innerHTML = '';
     if (filtered.length === 0) {
@@ -293,6 +288,8 @@ function updateUI() {
     document.getElementById('balanceDisplay').textContent = `$${state.balance.toFixed(2)}`;
     document.getElementById('withdrawBtn').disabled = state.balance < MIN_WITHDRAWAL;
     document.getElementById('refCount').textContent = state.referrals.length;
+    const active = state.referrals.filter(r => r.activated).length;
+    document.getElementById('refActive').textContent = active;
     document.getElementById('refEarnings').textContent = state.refEarnings.toFixed(2);
 }
 
