@@ -243,26 +243,6 @@ function startAd(index) {
 
     state.currentAdIndex = index;
     const ad = AD_LINKS[index];
-    const modal = document.getElementById('adModal');
-    const timerEl = document.getElementById('adTimer');
-    const statusEl = document.getElementById('adStatus');
-    const visitBtn = document.getElementById('adVisitBtn');
-    const contentEl = document.getElementById('adContent');
-
-    modal.classList.add('active');
-    timerEl.textContent = '...';
-    statusEl.textContent = 'Loading ad...';
-    visitBtn.style.display = 'none';
-
-    contentEl.innerHTML = `
-        <div style="padding:20px;text-align:center">
-            <h4 style="color:#00d4ff;font-size:15px;margin-bottom:8px">${ad.name}</h4>
-            <p style="color:#888;font-size:12px">Sponsored Advertisement</p>
-            <div style="margin-top:12px;padding:20px;background:#0f0f1a;border-radius:8px">
-                <p style="color:#555">Loading ad content...</p>
-            </div>
-        </div>
-    `;
 
     if (typeof show_11248447 === 'function') {
         const adIndex = state.completedAds.length % 3;
@@ -284,37 +264,26 @@ function startAd(index) {
             });
         }
         adPromise.then(() => {
-            startAdTimer(ad, modal, timerEl, statusEl, visitBtn);
+            completeAd(ad);
+            if (state.completedAds.length < AD_LINKS.length) {
+                setTimeout(() => startNextAd(), 500);
+            }
         }).catch(() => {
-            startAdTimer(ad, modal, timerEl, statusEl, visitBtn);
+            completeAd(ad);
         });
     } else {
-        startAdTimer(ad, modal, timerEl, statusEl, visitBtn);
+        completeAd(ad);
     }
 }
 
-function startAdTimer(ad, modal, timerEl, statusEl, visitBtn) {
-    let countdown = 5;
-    timerEl.textContent = countdown;
-    statusEl.textContent = `Watch ad for ${countdown} seconds...`;
-
-    const timer = setInterval(() => {
-        countdown--;
-        timerEl.textContent = countdown;
-        if (countdown <= 0) {
-            clearInterval(timer);
-            timerEl.textContent = 'OK';
-            statusEl.textContent = 'Ad completed! Click to visit the link.';
-            visitBtn.style.display = 'block';
-        }
-    }, 1000);
-
-    visitBtn.onclick = () => {
-        completeAd(ad);
-        modal.classList.remove('active');
-        clearInterval(timer);
-        window.open(ad.url, '_blank');
-    };
+function startNextAd() {
+    const filtered = getFilteredAds();
+    const next = filtered.find(a => !state.completedAds.includes(a.id));
+    if (next) {
+        startAd(AD_LINKS.indexOf(next));
+    } else {
+        renderAds();
+    }
 }
 
 function completeAd(ad) {
@@ -392,9 +361,6 @@ function setupRefLink() {
 }
 
 function setupModals() {
-    document.getElementById('closeAdModal')?.addEventListener('click', () => {
-        document.getElementById('adModal').classList.remove('active');
-    });
     document.getElementById('closeWithdrawModal')?.addEventListener('click', () => {
         document.getElementById('withdrawModal').classList.remove('active');
     });
